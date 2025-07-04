@@ -1,57 +1,48 @@
 import { locationIcon, pageMode } from "./geral"
-export type actionFeatures = {
-  id: number
-  name: string
-  canonical: string
-  checked: boolean
-}
-export type feature = {
+
+export type recurso = {
   id: number | null
-  name: string | null
-  canonical: string | null
-  actions: actionFeatures[]
-  active: boolean
-  visible: boolean
-  deviceComponentsId: number
-  icon: string | null
-  path: string | null
-  createdName: string | null
-  createdAt: Date | null
-  updatedName: string | null
-  updatedAt: Date | null
+  nome: string | null
+  recurso_tipo_id: number | null
+  tag: string | null
+  icone: string | null
+  url: string | null
+  ativo: boolean
+  criadopor: string | null
+  criadoem: Date | null
+  editadopor: string | null
+  editadoem: Date | null
 }
-export type deviceList = { id: number; name: string; deviceid: number }
+export type recursoTipo = { id: number; nome: string; tag: string }
 export type featureManagement = {
   locationIcon: locationIcon
   pageMode: pageMode
-  device: {
-    list: deviceList[]
+  recursoTipoLista: {
+    list: recursoTipo[]
     length: number
   }
-  feature: feature
+  recurso: recurso
 }
 const construtor = () => {
   let res: featureManagement = {
     locationIcon: "visibility",
     pageMode: "visualizing",
-    device: {
+    recursoTipoLista: {
       list: [],
       length: 0
     },
-    feature: {
+    recurso: {
       id: null,
-      name: null,
-      canonical: null,
-      actions: [],
-      active: false,
-      visible: false,
-      deviceComponentsId: 0,
-      icon: null,
-      path: null,
-      createdName: null,
-      createdAt: null,
-      updatedName: null,
-      updatedAt: null
+      nome: null,
+      recurso_tipo_id: null,
+      tag: null,
+      icone: null,
+      url: null,
+      ativo: false,
+      criadopor: null,
+      criadoem: null,
+      editadopor: null,
+      editadoem: null
     }
   }
   return res

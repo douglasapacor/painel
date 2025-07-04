@@ -31,9 +31,6 @@ body::-webkit-scrollbar-thumb:active {
   background: #0d47a1;
 }
 
-/* #endregion Scroll*/
-
-/*  #region taskScroll*/
 .TaskContainer {
   display: flex;
   width: 100%;

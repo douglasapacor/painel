@@ -1,4 +1,3 @@
-import LimitedCtxControll from "@/context/Limited"
 import MasterCtxControll from "@/context/Master"
 import "@/styles/common.css"
 import theme from "@/styles/theme"
@@ -44,9 +43,7 @@ export default function App(props: MyAppProps) {
         <CssBaseline />
         <CookiesProvider>
           <MasterCtxControll>
-            <LimitedCtxControll>
-              <Component {...pageProps} />
-            </LimitedCtxControll>
+            <Component {...pageProps} />
           </MasterCtxControll>
         </CookiesProvider>
       </ThemeProvider>
