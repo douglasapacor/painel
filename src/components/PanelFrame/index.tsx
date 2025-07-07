@@ -1,4 +1,4 @@
-import { useContextMaster } from "@/context/Master"
+import { useCtxSuperior } from "@/context/Master"
 import { AccountCircle, Close, Menu } from "@mui/icons-material"
 import {
   Avatar,
@@ -47,7 +47,7 @@ export const PanelFrame: FC<{
   dense?: boolean
 }> = ({ ...props }) => {
   const router = useRouter()
-  const masterContext = useContextMaster()
+  const masterContext = useCtxSuperior()
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -136,13 +136,13 @@ export const PanelFrame: FC<{
           >
             <ListItemButton
               onClick={() => {
-                router.push(`/painel/boletim`)
+                router.push(`/recurso`)
               }}
             >
               <ListItemIcon>
                 <Icon>home</Icon>
               </ListItemIcon>
-              <ListItemText primary={"Boletim"} />
+              <ListItemText primary={"Recurso"} />
             </ListItemButton>
           </List>
 
@@ -219,14 +219,16 @@ export const PanelFrame: FC<{
                     justifyContent: "center"
                   }}
                 >
-                  {masterContext.data && masterContext.data.photo !== "" ? (
+                  {/* {masterContext.data && masterContext.data.photo !== "" ? (
                     <Avatar
                       sx={{ width: 102, height: 102 }}
                       src={masterContext.data.photo}
                     />
                   ) : (
                     <Avatar sx={{ width: 102, height: 102 }} />
-                  )}
+                  )} */}
+
+                  <Avatar sx={{ width: 102, height: 102 }} />
                 </Box>
               </ListItem>
               <ListItem>
@@ -237,33 +239,43 @@ export const PanelFrame: FC<{
                     justifyContent: "center"
                   }}
                 >
-                  <i>{masterContext.data && masterContext.data.name}</i>
+                  <i>{`${
+                    masterContext.usuario ? masterContext.usuario.nome : ""
+                  }`}</i>
                 </Box>
               </ListItem>
               <Divider />
-              <ListItem>
+              <ListItem
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
                 <Typography variant="caption">MENU DO USUÁRIO</Typography>
               </ListItem>
 
-              {masterContext.data
-                ? masterContext.data.access.map((item: any, index: any) => {
-                    return item.visible && item.deviceId === 2 ? (
-                      <ListItemButton
-                        key={`menu-left-${index}-item`}
-                        onClick={() => {
-                          router.push(`/painel${item.path}`)
-                        }}
-                      >
-                        <ListItemIcon>
-                          <Icon>{item.icon}</Icon>
-                        </ListItemIcon>
-                        <ListItemText primary={item.name} />
-                      </ListItemButton>
-                    ) : (
-                      ""
-                    )
-                  })
-                : ""}
+              {/* {masterContext.data
+                ? masterContext.data.configuracoes.map(
+                    (item: any, index: any) => {
+                      return item.visible && item.deviceId === 2 ? (
+                        <ListItemButton
+                          key={`menu-left-${index}-item`}
+                          onClick={() => {
+                            router.push(`/painel${item.path}`)
+                          }}
+                        >
+                          <ListItemIcon>
+                            <Icon>{item.icon}</Icon>
+                          </ListItemIcon>
+                          <ListItemText primary={item.name} />
+                        </ListItemButton>
+                      ) : (
+                        ""
+                      )
+                    }
+                  )
+                : ""} */}
 
               <Divider />
 

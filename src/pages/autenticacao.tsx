@@ -1,5 +1,5 @@
-import security from "@/config/actions/security"
-import { useContextMaster } from "@/context/Master"
+import entrypoints from "@/config/entrypoints"
+import { useCtxSuperior } from "@/context/Master"
 import fetchApi from "@/lib/fetch"
 import { Close, Visibility, VisibilityOff } from "@mui/icons-material"
 import {
@@ -32,7 +32,7 @@ const AutenticacaoPainel: NextPage = () => {
   const [alertMessage, setAlertMessage] = useState<string>("")
   const [lock, setLock] = useState<boolean>(false)
   const router = useRouter()
-  const masterContext = useContextMaster()
+  const masterContext = useCtxSuperior()
   const closeAlert = () => setAlert(false)
 
   const handleClickShowPassword = () => setShowPassword(show => !show)
@@ -50,7 +50,7 @@ const AutenticacaoPainel: NextPage = () => {
   }
 
   const goToRecoveryPassword = () => {
-    router.push("/painel/recuperar-senha")
+    router.push("/recuperar-senha")
   }
 
   const autehticationUser = async () => {
@@ -77,17 +77,17 @@ const AutenticacaoPainel: NextPage = () => {
 
       setLock(true)
 
-      const result = await fetchApi.post(security.user.authentication, {
+      const result = await fetchApi.post(entrypoints.seguranca.panelLogin, {
         login: user,
-        password: password,
-        keepConnected: keepConnected
+        senha: password,
+        keep: keepConnected
       })
 
       if (!result.success) throw new Error(result.message)
 
       masterContext.login(result.data)
 
-      router.push("/painel/inicio")
+      router.push("/")
     } catch (error: any) {
       setLock(false)
       setAlertMessage(error.message)

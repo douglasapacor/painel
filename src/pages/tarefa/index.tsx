@@ -1,14 +1,6 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Fab,
-  Grid,
-  Modal,
-  IconButton
-} from "@mui/material"
 import { NewBoardModal, PanelFrame } from "@/components"
 import { Add } from "@mui/icons-material"
+import { Box, Fab, Grid } from "@mui/material"
 import { NextPage } from "next"
 import { useState } from "react"
 

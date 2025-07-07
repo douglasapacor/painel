@@ -1,4 +1,4 @@
-import management from "@/config/actions/management"
+// import management from "@/config/actions/management"
 import { useContextMaster } from "@/context/Master"
 import fetchApi from "@/lib/fetch"
 import { Close } from "@mui/icons-material"
@@ -41,8 +41,9 @@ const NewBoardModal: FC<newBoardModal> = props => {
   const feedOptions = async () => {
     try {
       const result = await fetchApi.get(
-        management.board.findMembers(inputValue),
-        ctx.user ? ctx.user.credential : ""
+        "",
+        // management.board.findMembers(inputValue),
+        ctx.isAuthenticated && ctx.data ? ctx.data.credential : ""
       )
 
       if (!result.success) throw new Error(result.message)

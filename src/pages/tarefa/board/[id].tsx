@@ -1,37 +1,16 @@
 import { CardDetails, Columns, Members, PanelFrame } from "@/components"
-import Editor from "@/components/Editor"
-import {
-  cardContentStyle,
-  CssSelect,
-  CssTextField
-} from "@/styles/objects/cardContentStyle"
-import { serverSide } from "@/helpers/serverside/boardContext"
+// import { serverSide } from "@/helpers/serverside/boardContext"
 import { boardContext } from "@/serverside/types/boardContext"
-import { Add, ArrowBack, AttachFile, Close, Send } from "@mui/icons-material"
-import {
-  Avatar,
-  Box,
-  Button,
-  Chip,
-  FormControl,
-  Grid,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Modal,
-  OutlinedInput,
-  Paper,
-  Stack,
-  Typography
-} from "@mui/material"
-import { GetServerSideProps, NextPage } from "next"
+import { Add, ArrowBack } from "@mui/icons-material"
+import { Box, Button, Grid } from "@mui/material"
+import { NextPage } from "next"
 import { useState } from "react"
 
-export const getServerSideProps: GetServerSideProps<
-  boardContext
-> = async context => {
-  return serverSide(context)
-}
+// export const getServerSideProps: GetServerSideProps<
+//   boardContext
+// > = async context => {
+//   return serverSide(context)
+// }
 
 const BoardContent: NextPage<boardContext> = ({ ...props }) => {
   const [alerMessage, setAlerMessage] = useState("")

@@ -1,19 +1,15 @@
-import axios, { AxiosResponse } from "axios"
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
 import { defaultResponse } from "./props"
 
 const instance = axios.create()
 
 const get = async <T = any>(
   url: string,
-  auth?: string
+  config?: AxiosRequestConfig<any> | undefined
 ): Promise<defaultResponse<T>> => {
   try {
     const responseHttpRequest: AxiosResponse<defaultResponse> =
-      await instance.get(url, {
-        headers: {
-          Authorization: auth
-        }
-      })
+      await instance.get(url, config)
 
     if (responseHttpRequest.status === 200) {
       if (responseHttpRequest.data.data) {
@@ -45,15 +41,11 @@ const get = async <T = any>(
 const post = async <T = any>(
   url: string,
   body?: any,
-  auth?: string
+  config?: AxiosRequestConfig<any> | undefined
 ): Promise<defaultResponse<T>> => {
   try {
     const responseHttpRequest: AxiosResponse<defaultResponse> =
-      await instance.post(url, body, {
-        headers: {
-          Authorization: auth
-        }
-      })
+      await instance.post(url, body, config)
 
     if (responseHttpRequest.status === 200) {
       if (responseHttpRequest.data.data) {
@@ -85,15 +77,11 @@ const post = async <T = any>(
 const put = async <T = any>(
   url: string,
   body?: any,
-  auth?: string
+  config?: AxiosRequestConfig<any> | undefined
 ): Promise<defaultResponse<T>> => {
   try {
     const responseHttpRequest: AxiosResponse<defaultResponse> =
-      await instance.put(url, body, {
-        headers: {
-          Authorization: auth
-        }
-      })
+      await instance.put(url, body, config)
 
     if (responseHttpRequest.status === 200) {
       if (responseHttpRequest.data.data) {
@@ -124,15 +112,11 @@ const put = async <T = any>(
 
 const del = async <T = any>(
   url: string,
-  auth?: string
+  config?: AxiosRequestConfig<any> | undefined
 ): Promise<defaultResponse<T>> => {
   try {
     const responseHttpRequest: AxiosResponse<defaultResponse> =
-      await instance.delete(url, {
-        headers: {
-          Authorization: auth
-        }
-      })
+      await instance.delete(url, config)
 
     if (responseHttpRequest.status === 200) {
       if (responseHttpRequest.data.data) {
