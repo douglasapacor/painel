@@ -1,6 +1,4 @@
-import entrypoints from "@/config/entrypoints"
 import { useCtxSuperior } from "@/context/Master"
-import fetchApi from "@/lib/fetch"
 import { Close, Visibility, VisibilityOff } from "@mui/icons-material"
 import {
   Box,
@@ -77,15 +75,15 @@ const AutenticacaoPainel: NextPage = () => {
 
       setLock(true)
 
-      const result = await fetchApi.post(entrypoints.seguranca.panelLogin, {
-        login: user,
-        senha: password,
-        keep: keepConnected
-      })
+      // const result = await fetchApi.post(entrypoints.seguranca.panelLogin, {
+      //   login: user,
+      //   senha: password,
+      //   keep: keepConnected
+      // })
 
-      if (!result.success) throw new Error(result.message)
+      // if (!result.success) throw new Error(result.message)
 
-      masterContext.login(result.data)
+      // masterContext.login(result.data)
 
       router.push("/")
     } catch (error: any) {
@@ -204,13 +202,13 @@ const AutenticacaoPainel: NextPage = () => {
                         }
                         label="Manter Conectado"
                       />
-                      <Button
+                      {/* <Button
                         disabled={lock}
                         variant="text"
                         onClick={goToRecoveryPassword}
                       >
                         Esqueci minha senha
-                      </Button>
+                      </Button> */}
                     </Box>
                   </Grid>
                   <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

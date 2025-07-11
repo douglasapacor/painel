@@ -1,22 +1,20 @@
 //#region imports
 import { PanelFrame } from "@/components"
 import { useCtxSuperior } from "@/context/Master"
-import { serverSide } from "@/serverside/recursosIndex"
-import { featureIndexServerSide } from "@/serverside/types/recursosIndex"
 import { Add } from "@mui/icons-material"
 import { Box, Fab, Paper } from "@mui/material"
-import { GetServerSideProps, NextPage } from "next"
+import { NextPage } from "next"
 import { useRouter } from "next/router"
 import { useState } from "react"
 //#endregion
 
-export const getServerSideProps: GetServerSideProps<
-  featureIndexServerSide
-> = async context => {
-  return serverSide(context)
-}
+// export const getServerSideProps: GetServerSideProps<
+//   homeType
+// > = async context => {
+//   return home(context)
+// }
 
-const recursos: NextPage<featureIndexServerSide> = props => {
+const recursos: NextPage<any> = props => {
   const ctx = useCtxSuperior()
   const router = useRouter()
   const [alerMessage, setAlerMessage] = useState("")
@@ -50,7 +48,7 @@ const recursos: NextPage<featureIndexServerSide> = props => {
             color="primary"
             aria-label="add"
             onClick={() => {
-              router.push("/recurso/management/new")
+              router.push("/recurso/new")
             }}
           >
             <Add />

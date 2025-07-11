@@ -50,7 +50,7 @@ const MasterCtxControll: FC<{ children?: ReactNode }> = ({ ...props }) => {
     localStorage.removeItem("leftDrawerOpen")
     localStorage.removeItem("rightDrawerOpen")
 
-    window.location.href = "/painel/autenticacao"
+    window.location.href = "/autenticacao"
   }
 
   const changeLeft = () => {

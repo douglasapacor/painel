@@ -145,11 +145,9 @@ const del = async <T = any>(
   }
 }
 
-const fetch = {
+export default {
   get,
   post,
   put,
   del
 }
-
-export default fetch

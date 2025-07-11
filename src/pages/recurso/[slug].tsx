@@ -1,8 +1,10 @@
 import { PanelFrame } from "@/components"
 import { useCtxSuperior } from "@/context/Master"
 import sanitize from "@/lib/sanitize"
-import serverSide from "@/serverside/recursos"
-import { featureManagement } from "@/serverside/types/recursos"
+import { serversideReponse } from "@/serverside/core/serversideResponse"
+import management, {
+  recursoManagementType
+} from "@/serverside/recurso/management"
 import { ArrowBackIosNew, Delete, ExpandMore, Save } from "@mui/icons-material"
 import {
   Accordion,
@@ -26,44 +28,49 @@ import { useRouter } from "next/router"
 import { useState } from "react"
 
 export const getServerSideProps: GetServerSideProps<
-  featureManagement
+  serversideReponse<recursoManagementType>
 > = async context => {
-  return serverSide(context)
+  return management(context)
 }
 
-const recursoSelecionado: NextPage<featureManagement> = props => {
+const recursoSelecionado: NextPage<
+  serversideReponse<recursoManagementType>
+> = props => {
   const [alerMessage, setAlerMessage] = useState("")
   const [showAlert, setShowAlert] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [id, setId] = useState<number | undefined>(
-    props.recurso.id ?? undefined
-  )
+  const [id, setId] = useState<number | undefined>(props.data.id ?? undefined)
   const [nome, setNome] = useState<string | undefined>(
-    props.recurso.nome ?? undefined
+    props.data.nome ?? undefined
   )
   const [recursoTipoId, setRecursoTipoId] = useState<number | undefined>(
-    props.recurso.recurso_tipo_id ?? undefined
+    props.data.recurso_tipo_id ?? undefined
   )
   const [tag, setTag] = useState<string | undefined>(
-    props.recurso.tag ?? undefined
+    props.data.tag ?? undefined
   )
   const [icone, setIcone] = useState<string | undefined>(
-    props.recurso.icone ?? undefined
+    props.data.icone ?? undefined
   )
   const [url, setUrl] = useState<string | undefined>(
-    props.recurso.url ?? undefined
+    props.data.url ?? undefined
   )
   const [criadopor, setCriadopor] = useState<string | undefined>(
-    props.recurso.criadopor ?? undefined
+    props.metadata.detalhes.criacao?.nome ?? undefined
   )
-  const [criadoem, setCriadoem] = useState<Date | null>(props.recurso.criadoem)
-  const [editadopor, setEditadopor] = useState<string | null>(
-    props.recurso.editadopor
+  const [criadoem, setCriadoem] = useState<Date | null>(
+    props.metadata.detalhes.criacao
+      ? new Date(props.metadata.detalhes.criacao.data ?? "")
+      : null
+  )
+  const [editadopor, setEditadopor] = useState<string | undefined>(
+    props.metadata.detalhes.edicao?.nome ?? undefined
   )
   const [editadoem, setEditadoem] = useState<Date | null>(
-    props.recurso.editadoem
+    props.metadata.detalhes.edicao
+      ? new Date(props.metadata.detalhes.edicao.data ?? "")
+      : null
   )
-  const [page, setPage] = useState(1)
   const router = useRouter()
   const ctx = useCtxSuperior()
 
@@ -71,6 +78,7 @@ const recursoSelecionado: NextPage<featureManagement> = props => {
 
   return (
     <PanelFrame
+      dense
       alerMessage={alerMessage}
       showAlert={showAlert}
       title="Recursos"
@@ -87,17 +95,9 @@ const recursoSelecionado: NextPage<featureManagement> = props => {
           text: "Recursos"
         },
         {
-          href:
-            props.pageMode === "creating"
-              ? "/recurso/management/new"
-              : `/recurso/management/${
-                  router.query.slug ? router.query.slug[0] : ""
-                }`,
-          iconName: props.locationIcon,
-          text:
-            props.pageMode === "creating"
-              ? "Criando recurso"
-              : "Vizualizando recurso"
+          href: props.metadata.url ?? "",
+          iconName: props.metadata.icone ?? "",
+          text: props.metadata.nome ?? ""
         }
       ]}
       closeAlert={() => {
@@ -174,14 +174,15 @@ const recursoSelecionado: NextPage<featureManagement> = props => {
                     >
                       <MenuItem value={undefined}>Selecione</MenuItem>
 
-                      {props.recursoTipoLista.list.map((recursotipo, i) => (
-                        <MenuItem
-                          key={`recurso-tipo-item-${i}-index`}
-                          value={recursotipo.id}
-                        >
-                          {`${recursotipo.nome}:[#${recursotipo.tag}]`}
-                        </MenuItem>
-                      ))}
+                      {props.data.tipoLista &&
+                        props.data.tipoLista.map((recursotipo: any, i: any) => (
+                          <MenuItem
+                            key={`recurso-tipo-item-${i}-index`}
+                            value={recursotipo.id}
+                          >
+                            {`${recursotipo.nome}: #${recursotipo.tag}`}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </FormControl>
                 </Grid>
@@ -233,7 +234,7 @@ const recursoSelecionado: NextPage<featureManagement> = props => {
                                 <Typography
                                   variant="body2"
                                   sx={{
-                                    color: !props.recurso.criadopor
+                                    color: !criadopor
                                       ? "#BDBDBD"
                                       : "rgba(0, 0, 0, 0.87)"
                                   }}
@@ -252,16 +253,14 @@ const recursoSelecionado: NextPage<featureManagement> = props => {
                                 <Typography
                                   variant="body2"
                                   sx={{
-                                    color:
-                                      !props.recurso.criadopor ||
-                                      !props.recurso.criadoem
-                                        ? "#BDBDBD"
-                                        : "rgba(0, 0, 0, 0.87)"
+                                    color: !criadopor
+                                      ? "#BDBDBD"
+                                      : "rgba(0, 0, 0, 0.87)"
                                   }}
                                 >
-                                  {!props.recurso.criadoem
+                                  {!criadopor
                                     ? `-------- -------- | --/--/---- --:--`
-                                    : `${props.recurso.criadopor} | ${props.recurso.criadoem}`}
+                                    : `${criadopor} | ${criadoem}`}
                                 </Typography>
                               </Grid>
                             </Grid>
@@ -289,7 +288,7 @@ const recursoSelecionado: NextPage<featureManagement> = props => {
                                 <Typography
                                   variant="body2"
                                   sx={{
-                                    color: !props.recurso.editadopor
+                                    color: !editadopor
                                       ? "#BDBDBD"
                                       : "rgba(0, 0, 0, 0.87)"
                                   }}
@@ -308,16 +307,14 @@ const recursoSelecionado: NextPage<featureManagement> = props => {
                                 <Typography
                                   variant="body2"
                                   sx={{
-                                    color:
-                                      !props.recurso.editadopor ||
-                                      !props.recurso.editadoem
-                                        ? "#BDBDBD"
-                                        : "rgba(0, 0, 0, 0.87)"
+                                    color: !editadopor
+                                      ? "#BDBDBD"
+                                      : "rgba(0, 0, 0, 0.87)"
                                   }}
                                 >
-                                  {!props.recurso.editadoem
+                                  {!editadopor
                                     ? `-------- -------- | --/--/---- --:--`
-                                    : `${props.recurso.editadopor} | ${props.recurso.editadoem}`}
+                                    : `${editadopor} | ${editadoem}`}
                                 </Typography>
                               </Grid>
                             </Grid>
