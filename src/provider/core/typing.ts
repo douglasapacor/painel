@@ -1,15 +1,10 @@
-type functionPath = (...args: any[]) => string
-
-export type entrypointType = Record<
-  string,
-  Record<
-    string,
-    { method: "get" | "post" | "put" | "delete"; path: string | functionPath }
-  >
->
-
-export type apiRespondeDefault<T = any> = {
+export type apiResponseWrap<T = any> = {
   success: boolean
   data?: T
-  message?: string
+  message?: string | string[]
 }
+
+export type providerpath = Record<
+  string,
+  { url: string; method: "post" | "get" | "put" | "delete" }
+>

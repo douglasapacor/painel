@@ -1,14 +1,11 @@
-import Provider from "@/provider"
 import { metadata } from "./metadata"
 import { serversideReponse } from "./serversideResponse"
 
 export default class ServersideSystem<T = any> {
   private _metadata: metadata
   private _data: Partial<T>
-  private _provider: Provider
 
   constructor() {
-    this._provider = new Provider()
     this._metadata = {
       nome: null,
       url: null,
@@ -48,7 +45,13 @@ export default class ServersideSystem<T = any> {
     this._data = param
   }
 
-  get api(): Provider {
-    return this._provider
+  detalhes(
+    criacao: { id: number; nome: string; data: Date } | null,
+    edicao: { id: number; nome: string; data: Date } | null
+  ) {
+    this._metadata.detalhes = {
+      criacao,
+      edicao
+    }
   }
 }

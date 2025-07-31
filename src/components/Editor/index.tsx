@@ -1,7 +1,14 @@
-import { IEditor } from "@/serverside/types/IEditor"
 import dynamic from "next/dynamic"
 import { FC } from "react"
 import "suneditor/dist/css/suneditor.min.css"
+
+export interface IEditor {
+  width?: string
+  height?: string
+  content?: string | undefined
+  onChange?: (content: string) => void
+  callBackSave?: (contents: string, isChanged: boolean) => void
+}
 
 const SunEditor = dynamic(() => import("suneditor-react"), { ssr: false })
 
@@ -44,8 +51,7 @@ const Editor: FC<IEditor> = props => {
             "fullScreen",
             "showBlocks",
             "codeView",
-            "preview",
-            "save"
+            "preview"
           ]
         ],
         callBackSave: (contents: string, isChanged: boolean) => {

@@ -5,8 +5,9 @@ export type contextoUsuario = {
   nivel_consultor: number
   consultoria: number
   data_ultimo_acesso: string
-  credential: string
+  credencial: string
   configuracoes: Record<string, { nome: string; icone: string; url: string }[]>
+  foto: string
 }
 
 export type contextoPadrao = {
@@ -21,11 +22,12 @@ export type contextoPadrao = {
     nivel_consultor: number
     consultoria: number
     data_ultimo_acesso: string
-    credential: string
+    credencial: string
     configuracoes: Record<
       string,
       { nome: string; icone: string; url: string }[]
     >
+    foto: string
   }) => void
   logout: () => void
   changeLeft: () => void
@@ -40,8 +42,9 @@ export const contextoSuperior: contextoPadrao = {
     nivel_consultor: 0,
     consultoria: 0,
     data_ultimo_acesso: "",
-    credential: "",
-    configuracoes: {}
+    credencial: "",
+    configuracoes: {},
+    foto: ""
   },
   isAuth: false,
   left: false,

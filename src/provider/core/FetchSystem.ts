@@ -1,21 +1,25 @@
-import { defaultResponse } from "@/lib/fetch/props"
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
+import { apiResponseWrap } from "./typing"
+import UnauthorizedError from "./UnauthorizedError"
 
-export default class Fetch {
-  private instance: AxiosInstance
+export default class FetchSystem {
+  public instance: { api: AxiosInstance }
 
   constructor() {
-    this.instance = axios.create({ baseURL: "http://localhost:3001" })
+    this.instance = {
+      api: axios.create({ baseURL: "http://localhost:3001" })
+    }
   }
 
   async post<T = any>(
+    server: keyof typeof this.instance,
     url: string,
     body?: any,
     config?: AxiosRequestConfig<any> | undefined
-  ): Promise<defaultResponse<T>> {
+  ): Promise<apiResponseWrap<T>> {
     try {
-      const responseHttpRequest: AxiosResponse<defaultResponse> =
-        await this.instance.post(url, body, config)
+      const responseHttpRequest: AxiosResponse<apiResponseWrap<T>> =
+        await this.instance[server].post(url, body, config)
 
       if (responseHttpRequest.status === 200) {
         if (responseHttpRequest.data.data) {
@@ -45,12 +49,13 @@ export default class Fetch {
   }
 
   async get<T = any>(
+    server: keyof typeof this.instance,
     url: string,
     config?: AxiosRequestConfig<any> | undefined
-  ): Promise<defaultResponse<T>> {
+  ): Promise<apiResponseWrap<T>> {
     try {
-      const responseHttpRequest: AxiosResponse<defaultResponse> =
-        await this.instance.get(url, config)
+      const responseHttpRequest: AxiosResponse<apiResponseWrap<T>> =
+        await this.instance[server].get(url, config)
 
       if (responseHttpRequest.status === 200) {
         if (responseHttpRequest.data.data) {
@@ -65,6 +70,10 @@ export default class Fetch {
             message: responseHttpRequest.data.message
           }
         }
+      } else if (responseHttpRequest.status === 400) {
+        throw new UnauthorizedError(
+          responseHttpRequest.data.message?.toString() || ""
+        )
       } else {
         return {
           success: false,
@@ -80,12 +89,13 @@ export default class Fetch {
   }
 
   async delete<T = any>(
+    server: keyof typeof this.instance,
     url: string,
     config?: AxiosRequestConfig<any> | undefined
-  ): Promise<defaultResponse<T>> {
+  ): Promise<apiResponseWrap<T>> {
     try {
-      const responseHttpRequest: AxiosResponse<defaultResponse> =
-        await this.instance.delete(url, config)
+      const responseHttpRequest: AxiosResponse<apiResponseWrap<T>> =
+        await this.instance[server].delete(url, config)
 
       if (responseHttpRequest.status === 200) {
         if (responseHttpRequest.data.data) {
@@ -115,13 +125,14 @@ export default class Fetch {
   }
 
   async put<T = any>(
+    server: keyof typeof this.instance,
     url: string,
     body?: any,
     config?: AxiosRequestConfig<any> | undefined
-  ): Promise<defaultResponse<T>> {
+  ): Promise<apiResponseWrap<T>> {
     try {
-      const responseHttpRequest: AxiosResponse<defaultResponse> =
-        await this.instance.put(url, body, config)
+      const responseHttpRequest: AxiosResponse<apiResponseWrap<T>> =
+        await this.instance[server].put(url, body, config)
 
       if (responseHttpRequest.status === 200) {
         if (responseHttpRequest.data.data) {

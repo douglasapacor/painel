@@ -1,5 +1,5 @@
 export type quem = {
-  id: number
+  id: number | null
   nome: string
-  data: string | Date
+  data: Date | string
 }

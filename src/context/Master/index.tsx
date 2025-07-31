@@ -26,30 +26,32 @@ const MasterCtxControll: FC<{ children?: ReactNode }> = ({ ...props }) => {
     const lf = localStorage.getItem("leftDrawerOpen")
     const rt = localStorage.getItem("rightDrawerOpen")
     const auth = localStorage.getItem("isAuth")
-    const usuario = localStorage.getItem("contextosuperior")
+    const usr = localStorage.getItem("contextosuperior")
 
-    if (usuario !== null) setUsuario(JSON.parse(usuario))
     if (lf !== null) setLeft(JSON.parse(lf))
     if (rt !== null) setRight(JSON.parse(rt))
     if (auth !== null) setIsAuth(JSON.parse(auth))
+    if (usr !== null) {
+      setUsuario(JSON.parse(usr))
+    }
   }, [])
 
   const login = (user: contextoUsuario) => {
     setUsuario(user)
     setIsAuth(true)
-    setCookie("inrcredential", user.credential)
+    setCookie("inrcredential", user.credencial)
     localStorage.setItem("contextosuperior", JSON.stringify(user))
+    localStorage.setItem("isAuth", "true")
   }
 
   const logout = () => {
     setUsuario(null)
     setIsAuth(false)
     removeCookie("inrcredential")
-
     localStorage.removeItem("contextosuperior")
     localStorage.removeItem("leftDrawerOpen")
     localStorage.removeItem("rightDrawerOpen")
-
+    localStorage.removeItem("isAuth")
     window.location.href = "/autenticacao"
   }
 

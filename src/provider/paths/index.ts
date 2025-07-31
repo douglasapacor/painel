@@ -1,0 +1,7 @@
+export { default as boletim } from "./boletim"
+export { default as jurisprudencia } from "./jurisprudencia"
+export { default as legislacao } from "./legislacao"
+export { default as noticia } from "./noticia"
+export { default as opniao } from "./opniao"
+export { default as recurso } from "./recurso"
+export { default as seguranca } from "./seguranca"
