@@ -191,9 +191,13 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
   const [conteudoItems, setConteudoItems] = useState<conteudo[]>(
     props.data.conteudo ?? []
   )
-  const [needSaveContent, setNeedSaveContent] = useState(false)
-  const [needSaveObservacao, setNeedSaveObservacao] = useState(false)
-
+  const [needSaveBe, setNeedSaveBe] = useState(props.data.needSaveBe)
+  const [needSaveContent, setNeedSaveContent] = useState(
+    props.data.needSaveContent
+  )
+  const [needSaveObservacao, setNeedSaveObservacao] = useState(
+    props.data.needSaveObservacao
+  )
   const [observacaoText, setObservacaoText] = useState(
     props.data.observacao ?? ""
   )
@@ -231,6 +235,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
     props.data.publicado_em?.toString() || ""
   )
   //#endregion states:-details
+
   //#region states:-select pagination
   const [pagina, setPagina] = useState(0)
   const [selectLoading, setSelectLoading] = useState(true)
@@ -238,6 +243,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
   const menuRef = useRef<HTMLUListElement | null>(null)
   const scrollPositionRef = useRef<number>(0)
   //#endregion states:-details
+
   //#endregion states
 
   //#region statics
@@ -255,7 +261,6 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
       if (!boltimData) throw new Error("Entre com a data do boletim")
 
       const provider = new Provider()
-
       const response = await provider.call<{ boletim_id: number }>(
         "api",
         "boletim.salvar",
@@ -267,14 +272,15 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
       if (!response.success)
         throw new Error(response.message?.toString() || "Erro")
 
-      window.location.href = `/boletim/${response.data?.boletim_id}`
+      setNeedSaveBe(false)
+
+      router.push(`/boletim/${response.data?.boletim_id}`)
     } catch (error: any) {
       setAlerMessage(error.message)
       setShowAlert(true)
       setLoading(false)
     } finally {
       setLoading(false)
-
       setTimeout(() => {
         setShowAlert(false)
       }, 6000)
@@ -382,7 +388,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         4: "opniao.home",
         5: "perguntasrespostas.home",
         6: "mensagemeditores.home",
-        7: "pareceres.home",
+        7: "pareceresCGJSP.home",
         8: "suplemento.home",
         9: "historia.home",
         10: "curso.home",
@@ -440,7 +446,10 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         }
       )
 
-      if (apiResponse.success && apiResponse.data) {
+      if (!apiResponse.success)
+        throw new Error(apiResponse.message?.toString() || "Erro")
+
+      if (apiResponse.data) {
         setList(prev => [...prev, ...(apiResponse.data as thisList[])])
       }
     } catch (error) {
@@ -734,8 +743,39 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
 
   const saveButtonAction = async () => {
     if (activeStep === 0) {
-      await salvar()
-      setActiveStep(1)
+      try {
+        if (!boletimTipo)
+          throw new Error("Selecione o tipo de boletim a ser criado")
+
+        if (!boltimData) throw new Error("Entre com a data do boletim")
+
+        const provider = new Provider()
+        const response = await provider.call<{ boletim_id: number }>(
+          "api",
+          "boletim.salvar",
+          { boletim_tipo_id: boletimTipo, data: boltimData },
+          undefined,
+          { headers: { credential: ctx.usuario?.credencial } }
+        )
+
+        if (!response.success)
+          throw new Error(response.message?.toString() || "Erro")
+
+        setNeedSaveBe(false)
+
+        router.push(`/boletim/${response.data?.boletim_id}`)
+
+        setActiveStep(1)
+      } catch (error: any) {
+        setAlerMessage(error.message)
+        setShowAlert(true)
+        setLoading(false)
+      } finally {
+        setLoading(false)
+        setTimeout(() => {
+          setShowAlert(false)
+        }, 6000)
+      }
     }
 
     if (activeStep === 1) {
@@ -746,6 +786,82 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
     if (activeStep === 2) {
       await updateObservacao()
       setActiveStep(3)
+    }
+  }
+
+  const publishThis = async () => {
+    try {
+      setLoading(true)
+      const provider = new Provider()
+      const response = await provider.call<{
+        publicado: "N" | "S"
+        publicadoPor: string
+        publicadoEm: string
+      }>(
+        "api",
+        "boletim.publicarboletim",
+        undefined,
+        { idboletim: id },
+        { headers: { credential: ctx.usuario?.credencial } }
+      )
+
+      if (!response.success) throw new Error(response.message?.toString() || "")
+
+      setAprovado(response.data?.publicado || "")
+      setAprovadoem(response.data?.publicadoEm || "")
+      setAprovadopor(response.data?.publicadoPor || "")
+
+      setLoading(false)
+
+      setAlerMessage(response.message?.toString() || "")
+      setShowAlert(true)
+    } catch (error: any) {
+      setAlerMessage(error.message)
+      setShowAlert(true)
+      setLoading(false)
+    } finally {
+      setLoading(false)
+      setTimeout(() => {
+        setShowAlert(false)
+      }, 6000)
+    }
+  }
+
+  const aproveThis = async () => {
+    try {
+      setLoading(true)
+      const provider = new Provider()
+      const response = await provider.call<{
+        aprovado: "N" | "S"
+        aprovadoPor: string
+        aprovadoEm: string
+      }>(
+        "api",
+        "boletim.aprovarboletim",
+        undefined,
+        { idboletim: id },
+        { headers: { credential: ctx.usuario?.credencial } }
+      )
+
+      if (!response.success) throw new Error(response.message?.toString() || "")
+
+      setAprovado(response.data?.aprovado || "")
+      setAprovadoem(response.data?.aprovadoEm || "")
+      setAprovadopor(response.data?.aprovadoPor || "")
+
+      setLoading(false)
+
+      setAlerMessage(response.message?.toString() || "")
+      setShowAlert(true)
+    } catch (error: any) {
+      setAlerMessage(error.message)
+      setShowAlert(true)
+      setLoading(false)
+    } finally {
+      setLoading(false)
+      setTimeout(() => {
+        setShowAlert(false)
+      }, 6000)
     }
   }
   //#endregion function
@@ -831,77 +947,77 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
               </Box>
             </Grid>
 
-            {publicado === "N" && (
-              <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
-                <Box
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center"
-                  }}
-                >
+            <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center"
+                }}
+              >
+                {publicado === "N" && (
                   <Tooltip title="Salvar">
                     <IconButton onClick={saveButtonAction}>
                       <Save color="info" />
                     </IconButton>
                   </Tooltip>
-                </Box>
-              </Grid>
-            )}
+                )}
+              </Box>
+            </Grid>
 
-            {aprovado === "N" && publicado === "N" && (
-              <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
-                <Box
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center"
-                  }}
-                >
-                  <Tooltip title="Salvar">
-                    <IconButton>
+            <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center"
+                }}
+              >
+                {aprovado === "N" && publicado === "N" && (
+                  <Tooltip title="Aprovar">
+                    <IconButton onClick={aproveThis}>
                       <Check color="success" />
                     </IconButton>
                   </Tooltip>
-                </Box>
-              </Grid>
-            )}
+                )}
+              </Box>
+            </Grid>
 
-            {publicado === "N" && (
-              <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
-                <Box
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center"
-                  }}
-                >
-                  <Tooltip title="Aprovar">
-                    <IconButton>
+            <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center"
+                }}
+              >
+                {publicado === "N" && (
+                  <Tooltip title="Publicar">
+                    <IconButton onClick={publishThis}>
                       <Publish />
                     </IconButton>
                   </Tooltip>
-                </Box>
-              </Grid>
-            )}
+                )}
+              </Box>
+            </Grid>
 
-            {publicado === "N" && (
-              <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
-                <Box
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center"
-                  }}
-                >
+            <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center"
+                }}
+              >
+                {publicado === "N" && id && (
                   <Tooltip title="Excluir">
                     <IconButton>
                       <Delete color="error" />
                     </IconButton>
                   </Tooltip>
-                </Box>
-              </Grid>
-            )}
+                )}
+              </Box>
+            </Grid>
 
             <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
               <Box
@@ -915,31 +1031,33 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                   <IconButton
                     disabled={activeStep === 3}
                     onClick={() => {
-                      if (activeStep === 1) {
-                        if (needSaveContent) {
-                          setAlerMessage(
-                            "Salve antes de seguir adiante. Conteudo."
-                          )
-                          setShowAlert(true)
-                          setTimeout(() => {
-                            setShowAlert(false)
-                          }, 4000)
+                      if (activeStep === 0 && needSaveBe) {
+                        setAlerMessage("Salve antes de seguir adiante.")
+                        setShowAlert(true)
+                        setTimeout(() => {
+                          setShowAlert(false)
+                        }, 4000)
 
-                          return
-                        }
+                        return
                       }
 
-                      if (activeStep === 2) {
-                        if (needSaveObservacao) {
-                          setAlerMessage(
-                            "Salve antes de seguir adiante. Observação."
-                          )
-                          setShowAlert(true)
-                          setTimeout(() => {
-                            setShowAlert(false)
-                          }, 4000)
-                          return
-                        }
+                      if (activeStep === 1 && needSaveContent) {
+                        setAlerMessage("Salve antes de seguir adiante.")
+                        setShowAlert(true)
+                        setTimeout(() => {
+                          setShowAlert(false)
+                        }, 4000)
+
+                        return
+                      }
+
+                      if (activeStep === 2 && needSaveObservacao) {
+                        setAlerMessage("Salve antes de seguir adiante")
+                        setShowAlert(true)
+                        setTimeout(() => {
+                          setShowAlert(false)
+                        }, 4000)
+                        return
                       }
 
                       setActiveStep(actualValue => actualValue + 1)
@@ -1014,6 +1132,8 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                               label="Tipo de boletim"
                               value={boletimTipo}
                               onChange={async e => {
+                                setNeedSaveBe(true)
+
                                 setBoletimTipo(
                                   e.target.value ? +e.target.value : ""
                                 )
@@ -1074,6 +1194,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                               sx={{ width: "100%" }}
                               value={dayjs(boltimData)}
                               onChange={e => {
+                                setNeedSaveBe(true)
                                 setBoletimData(e)
                               }}
                             />

@@ -16,7 +16,7 @@ export function useCtxSuperior(): contextoPadrao {
 }
 
 const MasterCtxControll: FC<{ children?: ReactNode }> = ({ ...props }) => {
-  const [_, setCookie, removeCookie] = useCookies(["inrcredential"])
+  const [_, setCookie, removeCookie] = useCookies(["credential"])
   const [usuario, setUsuario] = useState<contextoUsuario | null>(null)
   const [isAuth, setIsAuth] = useState<boolean>(false)
   const [left, setLeft] = useState<boolean>(false)
@@ -39,7 +39,7 @@ const MasterCtxControll: FC<{ children?: ReactNode }> = ({ ...props }) => {
   const login = (user: contextoUsuario) => {
     setUsuario(user)
     setIsAuth(true)
-    setCookie("inrcredential", user.credencial)
+    setCookie("credential", user.credencial)
     localStorage.setItem("contextosuperior", JSON.stringify(user))
     localStorage.setItem("isAuth", "true")
   }
@@ -47,7 +47,7 @@ const MasterCtxControll: FC<{ children?: ReactNode }> = ({ ...props }) => {
   const logout = () => {
     setUsuario(null)
     setIsAuth(false)
-    removeCookie("inrcredential")
+    removeCookie("credential")
     localStorage.removeItem("contextosuperior")
     localStorage.removeItem("leftDrawerOpen")
     localStorage.removeItem("rightDrawerOpen")

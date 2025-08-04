@@ -33,6 +33,9 @@ export type boletimManagementType = {
   conteudotipoLista: { id: number; nome: string }[]
   boletimTipoDisabled: boolean
   boletimDataDisabled: boolean
+  needSaveBe: boolean
+  needSaveContent: boolean
+  needSaveObservacao: boolean
   conteudo: {
     conteudo_tipo_id: number
     items: {
@@ -71,7 +74,7 @@ const management = async (
         undefined,
         {
           headers: {
-            credential: context.req.cookies["inrcredential"]
+            credential: context.req.cookies["credential"]
           }
         }
       )
@@ -82,7 +85,10 @@ const management = async (
         tipoLista: tipoLista.data || [],
         conteudotipoLista: [],
         boletimTipoDisabled: false,
-        boletimDataDisabled: false
+        boletimDataDisabled: false,
+        needSaveBe: true,
+        needSaveContent: true,
+        needSaveObservacao: true
       }
     } else {
       const boletimSelecionado = await provider.call<{
@@ -126,19 +132,19 @@ const management = async (
         { id: context.params?.slug },
         {
           headers: {
-            credential: context.req.cookies["inrcredential"]
+            credential: context.req.cookies["credential"]
           }
         }
       )
 
-      const tipoLista = await provider.call<{ id: number; nome: string }[]>(
+      const tipolista = await provider.call<{ id: number; nome: string }[]>(
         "api",
         "boletim.tipo",
         undefined,
         undefined,
         {
           headers: {
-            credential: context.req.cookies["inrcredential"]
+            credential: context.req.cookies["credential"]
           }
         }
       )
@@ -150,7 +156,7 @@ const management = async (
         { idtipoboletim: boletimSelecionado.data?.boletim_tipo_id },
         {
           headers: {
-            credential: context.req.cookies["inrcredential"]
+            credential: context.req.cookies["credential"]
           }
         }
       )
@@ -175,10 +181,14 @@ const management = async (
 
       response.data = {
         ...boletimSelecionado.data,
-        tipoLista: tipoLista.success ? tipoLista.data : [],
-        conteudotipoLista: conttipolista.success ? conttipolista.data : [],
+        tipoLista: tipolista.success && tipolista.data ? tipolista.data : [],
+        conteudotipoLista:
+          conttipolista.success && conttipolista.data ? conttipolista.data : [],
         boletimTipoDisabled: true,
-        boletimDataDisabled: true
+        boletimDataDisabled: true,
+        needSaveBe: false,
+        needSaveContent: false,
+        needSaveObservacao: false
       }
     }
 

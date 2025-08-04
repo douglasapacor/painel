@@ -137,6 +137,7 @@ const AutenticacaoPainel: NextPage = () => {
                       }}
                     >
                       <Image
+                        priority
                         src="/logos/logo_inr.svg"
                         alt="Logo inr desde 1989"
                         width={120}

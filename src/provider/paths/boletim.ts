@@ -28,6 +28,14 @@ const boletim: providerpath = {
   updateobservacao: {
     method: "put",
     url: "/boletim/{:idboletim}/observacao"
+  },
+  aprovarboletim: {
+    method: "post",
+    url: "/boletim/{:idboletim}/aprovar"
+  },
+  publicarboletim: {
+    method: "post",
+    url: "/boletim/{:idboletim}/publicar"
   }
 }
 
