@@ -10,6 +10,7 @@ import { serversideReponse } from "@/serverside/core/serversideResponse"
 import {
   ArrowDownward,
   ArrowUpward,
+  CalendarMonth,
   Check,
   Delete,
   ExpandMore,
@@ -34,6 +35,7 @@ import {
   List,
   ListItem,
   MenuItem,
+  Modal,
   Paper,
   Select,
   Step,
@@ -202,6 +204,8 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
     props.data.observacao ?? ""
   )
 
+  const [showAcumuladoData, setShowAcumuladoData] = useState(false)
+
   //#region states:-details
   const [criadopor] = useState<string>(
     props.metadata.detalhes.criacao?.nome || ""
@@ -293,18 +297,29 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         setList([
           {
             id: 0,
-            titulo: `Clique aqui e acesse o conteúdo acumulado até o dia ${new Date().toLocaleDateString()}.`,
+            titulo: `Clique aqui e acesse o conteúdo acumulado até o dia [selecione a data].`,
             datacad: new Date().toLocaleDateString()
           }
         ])
         return
       }
 
-      if (conteudotipo === 12 || conteudotipo === 15 || conteudotipo === 18) {
+      // if (conteudotipo === 12 || conteudotipo === 15 || conteudotipo === 18) {
+      //   setList([
+      //     {
+      //       id: 0,
+      //       titulo: `Clique aqui e acesse o conteúdo desta edição.`,
+      //       datacad: new Date().toLocaleDateString()
+      //     }
+      //   ])
+      //   return
+      // }
+
+      if (conteudotipo === 14) {
         setList([
           {
             id: 0,
-            titulo: `Clique aqui e acesse o conteúdo desta edição.`,
+            titulo: `Não há atos de interesse no Diário da Justiça Eletrônico do Tribunal de Justiça do Estado do São Paulo.`,
             datacad: new Date().toLocaleDateString()
           }
         ])
@@ -338,17 +353,6 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
           {
             id: 0,
             titulo: `Não houve publicação do Diário da Justiça Eletrônico do Tribunal de Justiça do Estado de Rio Grande do Sul na data de hoje.`,
-            datacad: new Date().toLocaleDateString()
-          }
-        ])
-        return
-      }
-
-      if (conteudotipo === 14) {
-        setList([
-          {
-            id: 0,
-            titulo: `Não há atos de interesse no Diário da Justiça Eletrônico do Tribunal de Justiça do Estado do São Paulo.`,
             datacad: new Date().toLocaleDateString()
           }
         ])
@@ -393,15 +397,15 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         9: "historia.home",
         10: "curso.home",
         11: "classificador.acumulados",
-        12: "classificador.SP",
-        13: "classificador.semPubSP",
-        14: "classificador.semAtosSp",
-        15: "classificador.PR",
-        16: "classificador.semPubPR",
-        17: "classificador.semAtosPR",
-        18: "classificador.RS",
-        19: "classificador.semPubRS",
-        20: "classificador.semAtosRS",
+        12: "classificador.sp",
+        13: "classificador.sempubsp",
+        14: "classificador.sematosp",
+        15: "classificador.pr",
+        16: "classificador.sempubpr",
+        17: "classificador.sematopr",
+        18: "classificador.rs",
+        19: "classificador.sempubrs",
+        20: "classificador.semators",
         21: "noticia.home",
         22: "jurisprudencia.home",
         23: "legislacao.home",
@@ -450,7 +454,17 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         throw new Error(apiResponse.message?.toString() || "Erro")
 
       if (apiResponse.data) {
-        setList(prev => [...prev, ...(apiResponse.data as thisList[])])
+        if (conteudotipo === 12) {
+          const filtered = apiResponse.data.map(item => ({
+            id: item.id,
+            titulo: item.datacad,
+            datacad: item.datacad
+          }))
+
+          setList(prev => [...prev, ...(filtered as thisList[])])
+        } else {
+          setList(prev => [...prev, ...(apiResponse.data as thisList[])])
+        }
       }
     } catch (error) {
       console.error("Erro ao buscar itens:", error)
@@ -1502,11 +1516,12 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                             <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
                               <FormControl fullWidth>
                                 <InputLabel htmlFor="tipoConteudo">
-                                  Tipo de Contéudo
+                                  Tipo de Conteúdo
                                 </InputLabel>
+
                                 <Select
                                   id="tipoConteudo"
-                                  label="Tipo de Contéudo"
+                                  label="Tipo de Conteúdo"
                                   value={conteudotipo}
                                   onChange={e => {
                                     setConteudotipo(
@@ -1746,15 +1761,39 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                             paddingBottom: "5px"
                                           }}
                                         >
+                                          {/* AQUI */}
                                           <Box
                                             sx={{
-                                              minWidth: "70%",
+                                              minWidth: "64%",
                                               textAlign: "left",
                                               alignItems: "center"
                                             }}
                                           >
                                             {conteudoItem.titulo}
                                           </Box>
+
+                                          {item.conteudo_tipo_id === 11 && (
+                                            <Box
+                                              sx={{
+                                                minWidth: "6%",
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center"
+                                              }}
+                                            >
+                                              <Tooltip title="Selecione a data">
+                                                <IconButton
+                                                  size="small"
+                                                  onClick={() => {
+                                                    // AQUI 2
+                                                    setShowAcumuladoData(true)
+                                                  }}
+                                                >
+                                                  <CalendarMonth />
+                                                </IconButton>
+                                              </Tooltip>
+                                            </Box>
+                                          )}
 
                                           <Box
                                             sx={{
@@ -2045,6 +2084,72 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
           </Paper>
         </Grid>
       </Grid>
+      <Modal open={showAcumuladoData}>
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 450,
+            bgcolor: "background.paper",
+            border: "1px solid #000",
+            boxShadow: 24,
+            p: 4
+          }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <Grid container justifyItems="center" alignItems="center">
+                <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                  <Icon color="error" fontSize="large">
+                    calendar_month
+                  </Icon>
+                </Grid>
+                <Grid item xs={12} sm={12} md={10} lg={10} xl={10}>
+                  <Typography
+                    variant="body1"
+                    sx={{ textTransform: "uppercase" }}
+                  >
+                    Selecione a data limite dos acumulados
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="pt-br"
+              >
+                <DatePicker
+                  sx={{ width: "100%" }}
+                  onChange={e => {
+                    if (!e) return
+
+                    const tmp = [...conteudoItems]
+
+                    for (let i = 0; i < tmp.length; i++) {
+                      if (tmp[i].conteudo_tipo_id === 11) {
+                        for (let y = 0; y < tmp[i].items.length; y++) {
+                          tmp[i].items[
+                            y
+                          ].titulo = `Clique aqui e acesse o conteúdo acumulado até o dia ${e.format(
+                            "DD/MM/YYYY"
+                          )}.`
+                        }
+                      }
+                    }
+
+                    setConteudoItems(tmp)
+                    setShowAcumuladoData(false)
+                  }}
+                />
+              </LocalizationProvider>
+            </Grid>
+          </Grid>
+        </Box>
+      </Modal>
     </PanelFrame>
   )
 }

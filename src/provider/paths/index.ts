@@ -1,4 +1,5 @@
 export { default as boletim } from "./boletim"
+export { default as classificador } from "./classificador"
 export { default as curso } from "./curso"
 export { default as historia } from "./historia"
 export { default as jurisprudencia } from "./jurisprudencia"
