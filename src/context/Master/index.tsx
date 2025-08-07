@@ -18,40 +18,32 @@ export function useCtxSuperior(): contextoPadrao {
 const MasterCtxControll: FC<{ children?: ReactNode }> = ({ ...props }) => {
   const [_, setCookie, removeCookie] = useCookies(["credential"])
   const [usuario, setUsuario] = useState<contextoUsuario | null>(null)
-  const [isAuth, setIsAuth] = useState<boolean>(false)
   const [left, setLeft] = useState<boolean>(false)
   const [rigth, setRight] = useState<boolean>(false)
 
   useEffect(() => {
     const lf = localStorage.getItem("leftDrawerOpen")
     const rt = localStorage.getItem("rightDrawerOpen")
-    const auth = localStorage.getItem("isAuth")
     const usr = localStorage.getItem("contextosuperior")
-
     if (lf !== null) setLeft(JSON.parse(lf))
     if (rt !== null) setRight(JSON.parse(rt))
-    if (auth !== null) setIsAuth(JSON.parse(auth))
-    if (usr !== null) {
-      setUsuario(JSON.parse(usr))
-    }
+    if (usr !== null) setUsuario(JSON.parse(usr))
   }, [])
 
   const login = (user: contextoUsuario) => {
     setUsuario(user)
-    setIsAuth(true)
     setCookie("credential", user.credencial)
     localStorage.setItem("contextosuperior", JSON.stringify(user))
-    localStorage.setItem("isAuth", "true")
   }
 
   const logout = () => {
     setUsuario(null)
-    setIsAuth(false)
     removeCookie("credential")
+
     localStorage.removeItem("contextosuperior")
     localStorage.removeItem("leftDrawerOpen")
     localStorage.removeItem("rightDrawerOpen")
-    localStorage.removeItem("isAuth")
+
     window.location.href = "/autenticacao"
   }
 
@@ -67,7 +59,6 @@ const MasterCtxControll: FC<{ children?: ReactNode }> = ({ ...props }) => {
 
   const ctx: contextoPadrao = {
     usuario,
-    isAuth,
     left,
     rigth,
     login,

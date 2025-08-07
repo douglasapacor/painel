@@ -177,7 +177,6 @@ const home: NextPage<serversideReponse<boletimInicioType>> = props => {
                     pattern: "[0-9]*"
                   }}
                   onKeyDown={e => {
-                    e.preventDefault()
                     if (e.key === "Enter") search()
                   }}
                 />

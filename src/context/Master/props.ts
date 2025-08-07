@@ -12,7 +12,6 @@ export type contextoUsuario = {
 
 export type contextoPadrao = {
   usuario: contextoUsuario | null
-  isAuth: boolean
   left: boolean
   rigth: boolean
   login: (ctx: {
@@ -46,7 +45,6 @@ export const contextoSuperior: contextoPadrao = {
     configuracoes: {},
     foto: ""
   },
-  isAuth: false,
   left: false,
   rigth: false,
   login: (ctx: contextoUsuario) => {},

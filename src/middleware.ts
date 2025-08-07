@@ -1,8 +1,8 @@
 import { jwtDecode } from "jwt-decode"
 import { NextRequest, NextResponse } from "next/server"
 const publicRoutes = [
-  { path: "/autenticacao", whenAuthenticated: "redirect" },
-  { path: "/boletim", whenAuthenticated: "next" }
+  { path: "/autenticacao", whenAuthenticated: "redirect" }
+  // { path: "/boletim", whenAuthenticated: "next" }
 ] as const
 const REDIRECT_WHEN_NOT_AUTHENTICATED = "/autenticacao"
 

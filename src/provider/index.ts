@@ -40,6 +40,7 @@ export default class Provider {
       const splited = identifier.split(".")
       const first = splited[0]
       const second = splited[1]
+
       const path =
         paths[first as keyof typeof paths][second as keyof typeof paths]
 

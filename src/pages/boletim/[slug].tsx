@@ -207,7 +207,6 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
   const [observacaoText, setObservacaoText] = useState(
     props.data.observacao ?? ""
   )
-
   const [showAcumuladoData, setShowAcumuladoData] = useState(false)
   const [showDeleteBoletim, setShowDeleteBoletim] = useState(false)
 
@@ -378,7 +377,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         24: "opniao.home",
         25: "perguntasrespostas.home",
         26: "mensagemeditores.home",
-        27: "pareceres.home",
+        27: "pareceresCGJSP.home",
         28: "suplemento.home",
         29: "historia.home",
         30: "curso.home",
@@ -388,7 +387,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         34: "opniao.home",
         35: "perguntasrespostas.home",
         36: "mensagemeditores.home",
-        37: "pareceres.home",
+        37: "pareceresCGJSP.home",
         38: "suplemento.home",
         39: "historia.home",
         40: "curso.home"
@@ -442,8 +441,8 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
             break
         }
       }
-    } catch (error) {
-      console.error("Erro ao buscar itens:", error)
+    } catch (error: any) {
+      console.error("Erro ao buscar itens:", error.message)
     } finally {
       setSelectLoading(false)
     }

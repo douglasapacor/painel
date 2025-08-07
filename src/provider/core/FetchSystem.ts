@@ -1,4 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios"
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse
+} from "axios"
 import { apiResponseWrap } from "./typing"
 import UnauthorizedError from "./UnauthorizedError"
 
@@ -41,9 +46,22 @@ export default class FetchSystem {
         }
       }
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.message
+      if (error instanceof AxiosError) {
+        window.location.href = "/autenticacao"
+
+        localStorage.removeItem("contextosuperior")
+        localStorage.removeItem("leftDrawerOpen")
+        localStorage.removeItem("rightDrawerOpen")
+
+        return {
+          success: false,
+          message: error.message
+        }
+      } else {
+        return {
+          success: false,
+          message: error.message
+        }
       }
     }
   }
@@ -81,9 +99,22 @@ export default class FetchSystem {
         }
       }
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.message
+      if (error instanceof AxiosError) {
+        window.location.href = "/autenticacao"
+
+        localStorage.removeItem("contextosuperior")
+        localStorage.removeItem("leftDrawerOpen")
+        localStorage.removeItem("rightDrawerOpen")
+
+        return {
+          success: false,
+          message: error.message
+        }
+      } else {
+        return {
+          success: false,
+          message: error.message
+        }
       }
     }
   }
@@ -117,9 +148,22 @@ export default class FetchSystem {
         }
       }
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.message
+      if (error instanceof AxiosError) {
+        window.location.href = "/autenticacao"
+
+        localStorage.removeItem("contextosuperior")
+        localStorage.removeItem("leftDrawerOpen")
+        localStorage.removeItem("rightDrawerOpen")
+
+        return {
+          success: false,
+          message: error.message
+        }
+      } else {
+        return {
+          success: false,
+          message: error.message
+        }
       }
     }
   }
@@ -154,9 +198,22 @@ export default class FetchSystem {
         }
       }
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.message
+      if (error instanceof AxiosError) {
+        window.location.href = "/autenticacao"
+
+        localStorage.removeItem("contextosuperior")
+        localStorage.removeItem("leftDrawerOpen")
+        localStorage.removeItem("rightDrawerOpen")
+
+        return {
+          success: false,
+          message: error.message
+        }
+      } else {
+        return {
+          success: false,
+          message: error.message
+        }
       }
     }
   }
