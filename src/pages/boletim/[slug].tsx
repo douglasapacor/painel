@@ -8,6 +8,7 @@ import management, {
 } from "@/serverside/boletim/management"
 import { serversideReponse } from "@/serverside/core/serversideResponse"
 import {
+  ArrowBack,
   ArrowDownward,
   ArrowUpward,
   CalendarMonth,
@@ -70,9 +71,12 @@ export const getServerSideProps: GetServerSideProps<
 
 //#region local-types
 type thisList = {
-  id: number
-  titulo: string
-  datacad: string
+  id?: number
+  titulo?: string
+  datacad?: string
+  idato?: number
+  tipo?: string
+  ano?: number
 }
 
 type conteudo = {
@@ -139,7 +143,7 @@ const linkNames = [
   "boletim/suplemento",
   "boletim/historia",
   "servicos/INRcursos",
-  "boletim/classificadorINR-SP",
+  "boletim/ato-anterior",
   "boletim/classificadorINR-SP",
   "boletim/classificadorINR-SP",
   "boletim/classificadorINR-SP",
@@ -178,7 +182,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
   const [showAlert, setShowAlert] = useState(false)
   const [loading, setLoading] = useState(false)
   const [activeStep, setActiveStep] = useState(0)
-  const [id] = useState<number | null>(props.data.id || null)
+  const [id, setId] = useState<number | null>(props.data.id || null)
   const [boletimTipo, setBoletimTipo] = useState<number | "">(
     props.data.boletim_tipo_id ?? ""
   )
@@ -205,6 +209,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
   )
 
   const [showAcumuladoData, setShowAcumuladoData] = useState(false)
+  const [showDeleteBoletim, setShowDeleteBoletim] = useState(false)
 
   //#region states:-details
   const [criadopor] = useState<string>(
@@ -257,72 +262,10 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
   //#endregion statics
 
   //#region function
-  const salvar = async () => {
-    try {
-      if (!boletimTipo)
-        throw new Error("Selecione o tipo de boletim a ser criado")
-
-      if (!boltimData) throw new Error("Entre com a data do boletim")
-
-      const provider = new Provider()
-      const response = await provider.call<{ boletim_id: number }>(
-        "api",
-        "boletim.salvar",
-        { boletim_tipo_id: boletimTipo, data: boltimData },
-        undefined,
-        { headers: { credential: ctx.usuario?.credencial } }
-      )
-
-      if (!response.success)
-        throw new Error(response.message?.toString() || "Erro")
-
-      setNeedSaveBe(false)
-
-      router.push(`/boletim/${response.data?.boletim_id}`)
-    } catch (error: any) {
-      setAlerMessage(error.message)
-      setShowAlert(true)
-      setLoading(false)
-    } finally {
-      setLoading(false)
-      setTimeout(() => {
-        setShowAlert(false)
-      }, 6000)
-    }
-  }
-
   const fetchItems = async () => {
     try {
-      if (conteudotipo === 11) {
-        setList([
-          {
-            id: 0,
-            titulo: `Clique aqui e acesse o conteúdo acumulado até o dia [selecione a data].`,
-            datacad: new Date().toLocaleDateString()
-          }
-        ])
-        return
-      }
-
-      // if (conteudotipo === 12 || conteudotipo === 15 || conteudotipo === 18) {
-      //   setList([
-      //     {
-      //       id: 0,
-      //       titulo: `Clique aqui e acesse o conteúdo desta edição.`,
-      //       datacad: new Date().toLocaleDateString()
-      //     }
-      //   ])
-      //   return
-      // }
-
-      if (conteudotipo === 14) {
-        setList([
-          {
-            id: 0,
-            titulo: `Não há atos de interesse no Diário da Justiça Eletrônico do Tribunal de Justiça do Estado do São Paulo.`,
-            datacad: new Date().toLocaleDateString()
-          }
-        ])
+      if (!conteudotipo) {
+        console.warn(`conteudoTipo não definido`)
         return
       }
 
@@ -330,7 +273,22 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         setList([
           {
             id: 0,
-            titulo: `Não houve publicação do Diário da Justiça Eletrônico do Tribunal de Justiça do Estado de São Paulo na data de hoje.`,
+            titulo: `${boltimData?.format(
+              "DD/MM/YYYY"
+            )} – Não houve publicação do Diário da Justiça Eletrônico do Tribunal de Justiça do Estado de São Paulo na data de hoje.`,
+            datacad: new Date().toLocaleDateString()
+          }
+        ])
+        return
+      }
+
+      if (conteudotipo === 14) {
+        setList([
+          {
+            id: 0,
+            titulo: `${boltimData?.format(
+              "DD/MM/YYYY"
+            )} – Não há atos de interesse no Diário da Justiça Eletrônico do Tribunal de Justiça do Estado do São Paulo.`,
             datacad: new Date().toLocaleDateString()
           }
         ])
@@ -341,7 +299,9 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         setList([
           {
             id: 0,
-            titulo: `Não houve publicação do Diário da Justiça Eletrônico do Tribunal de Justiça do Estado de Paraná na data de hoje.`,
+            titulo: `${boltimData?.format(
+              "DD/MM/YYYY"
+            )} – Não houve publicação do Diário da Justiça Eletrônico do Tribunal de Justiça do Estado de Paraná na data de hoje.`,
             datacad: new Date().toLocaleDateString()
           }
         ])
@@ -352,7 +312,9 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         setList([
           {
             id: 0,
-            titulo: `Não houve publicação do Diário da Justiça Eletrônico do Tribunal de Justiça do Estado de Rio Grande do Sul na data de hoje.`,
+            titulo: `${boltimData?.format(
+              "DD/MM/YYYY"
+            )} – Não houve publicação do Diário da Justiça Eletrônico do Tribunal de Justiça do Estado de Rio Grande do Sul na data de hoje.`,
             datacad: new Date().toLocaleDateString()
           }
         ])
@@ -363,7 +325,9 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         setList([
           {
             id: 0,
-            titulo: `Não há atos de interesse no Diário da Justiça Eletrônico do Tribunal de Justiça do Estado do Paraná.`,
+            titulo: `${boltimData?.format(
+              "DD/MM/YYYY"
+            )} – Não há atos de interesse no Diário da Justiça Eletrônico do Tribunal de Justiça do Estado do Paraná.`,
             datacad: new Date().toLocaleDateString()
           }
         ])
@@ -374,7 +338,9 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         setList([
           {
             id: 0,
-            titulo: `Não há atos de interesse no Diário da Justiça Eletrônico do Tribunal de Justiça do Estado do Rio Grande do Sul.`,
+            titulo: `${boltimData?.format(
+              "DD/MM/YYYY"
+            )} – Não há atos de interesse no Diário da Justiça Eletrônico do Tribunal de Justiça do Estado do Rio Grande do Sul.`,
             datacad: new Date().toLocaleDateString()
           }
         ])
@@ -396,7 +362,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         8: "suplemento.home",
         9: "historia.home",
         10: "curso.home",
-        11: "classificador.acumulados",
+        11: "classificador.atoanterior",
         12: "classificador.sp",
         13: "classificador.sempubsp",
         14: "classificador.sematosp",
@@ -428,11 +394,6 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         40: "curso.home"
       }
 
-      if (!conteudotipo) {
-        console.warn(`conteudoTipo não definido`)
-        return
-      }
-
       const endpoint = endpoints[conteudotipo] || ""
 
       if (!endpoint) {
@@ -454,16 +415,31 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         throw new Error(apiResponse.message?.toString() || "Erro")
 
       if (apiResponse.data) {
-        if (conteudotipo === 12) {
-          const filtered = apiResponse.data.map(item => ({
-            id: item.id,
-            titulo: item.datacad,
-            datacad: item.datacad
-          }))
+        let filtered: any
+        switch (conteudotipo) {
+          case 11:
+            filtered = apiResponse.data.map(item => ({
+              id: item.idato,
+              titulo: item.ano,
+              datacad: "acumulado até"
+            }))
 
-          setList(prev => [...prev, ...(filtered as thisList[])])
-        } else {
-          setList(prev => [...prev, ...(apiResponse.data as thisList[])])
+            setList(prev => [...prev, ...(filtered as thisList[])])
+            break
+          case 12:
+          case 15:
+          case 18:
+            filtered = apiResponse.data.map(item => ({
+              id: item.id,
+              titulo: `${item.datacad} – Clique aqui e acesse o conteúdo desta edição.`,
+              datacad: item.datacad
+            }))
+
+            setList(prev => [...prev, ...(filtered as thisList[])])
+            break
+          default:
+            setList(prev => [...prev, ...(apiResponse.data as thisList[])])
+            break
         }
       }
     } catch (error) {
@@ -557,56 +533,234 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
       const linkName = linkNames[conteudotipo - 1]
       let sufix
 
-      if (conteudotipo >= 10 && conteudotipo <= 19) {
+      if (conteudotipo === 11) {
+        sufix = new Date().getFullYear()
+      } else if (conteudotipo >= 12 && conteudotipo <= 20) {
         sufix = "ler"
       } else {
         sufix = sanitize(
-          parse(he.decode(content.titulo).replace(/<\/?p>/g, "")).toString()
+          parse(
+            he.decode(content.titulo || "").replace(/<\/?p>/g, "")
+          ).toString()
         ).urlFriendly()
       }
 
       if (tmp.length === 0) {
+        if (conteudotipo === 11) {
+          tmp.push({
+            conteudo_tipo_id: 12,
+            items: [
+              {
+                id: null,
+                identificador: content.id || 0,
+                titulo:
+                  "Clique aqui e acesse o conteúdo acumulado até o dia [selecione a data].",
+                url: `https://inrpublicacoes.com.br/site/${linkName}/${content.id}/${sufix}`
+              }
+            ]
+          })
+
+          setConteudoItems(tmp)
+          return
+        }
+
+        if (conteudotipo === 13 || conteudotipo === 14) {
+          tmp.push({
+            conteudo_tipo_id: 12,
+            items: [
+              {
+                id: null,
+                identificador: content.id || 0,
+                titulo: content.titulo || "",
+                url: ":NO-URL"
+              }
+            ]
+          })
+
+          setConteudoItems(tmp)
+          return
+        }
+
+        if (conteudotipo === 16 || conteudotipo === 17) {
+          tmp.push({
+            conteudo_tipo_id: 15,
+            items: [
+              {
+                id: null,
+                identificador: content.id || 0,
+                titulo: content.titulo || "",
+                url: ":NO-URL"
+              }
+            ]
+          })
+
+          setConteudoItems(tmp)
+          return
+        }
+
+        if (conteudotipo === 19 || conteudotipo === 20) {
+          tmp.push({
+            conteudo_tipo_id: 18,
+            items: [
+              {
+                id: null,
+                identificador: content.id || 0,
+                titulo: content.titulo || "",
+                url: ":NO-URL"
+              }
+            ]
+          })
+
+          setConteudoItems(tmp)
+          return
+        }
+
         tmp.push({
           conteudo_tipo_id: conteudotipo,
           items: [
             {
               id: null,
-              identificador: content.id,
-              titulo: content.titulo,
+              identificador: content.id || 0,
+              titulo: content.titulo || "",
               url: `https://inrpublicacoes.com.br/site/${linkName}/${content.id}/${sufix}`
             }
           ]
         })
 
         setConteudoItems(tmp)
+        return
       } else {
-        const sessionIndex = tmp.findIndex(
-          t => t.conteudo_tipo_id === conteudotipo
-        )
+        let sessionIndex = -1
+
+        switch (conteudotipo) {
+          case 11:
+          case 13:
+          case 14:
+            sessionIndex = tmp.findIndex(t => t.conteudo_tipo_id === 12)
+            break
+          case 16:
+          case 17:
+            sessionIndex = tmp.findIndex(t => t.conteudo_tipo_id === 15)
+            break
+          case 19:
+          case 20:
+            sessionIndex = tmp.findIndex(t => t.conteudo_tipo_id === 18)
+            break
+          default:
+            sessionIndex = tmp.findIndex(
+              t => t.conteudo_tipo_id === conteudotipo
+            )
+            break
+        }
 
         if (sessionIndex < 0) {
+          if (
+            conteudotipo === 11 ||
+            conteudotipo === 13 ||
+            conteudotipo === 14
+          ) {
+            tmp.push({
+              conteudo_tipo_id: 12,
+              items: [
+                {
+                  id: null,
+                  identificador: content.id || 0,
+                  titulo: content.titulo || "",
+                  url: ":NO-URL"
+                }
+              ]
+            })
+
+            setConteudoItems(tmp)
+            return
+          }
+
+          if (conteudotipo === 16 || conteudotipo === 17) {
+            tmp.push({
+              conteudo_tipo_id: 15,
+              items: [
+                {
+                  id: null,
+                  identificador: content.id || 0,
+                  titulo: content.titulo || "",
+                  url: ":NO-URL"
+                }
+              ]
+            })
+
+            console.log("16, 17", conteudotipo)
+
+            setConteudoItems(tmp)
+            return
+          }
+
+          if (conteudotipo === 19 || conteudotipo === 20) {
+            tmp.push({
+              conteudo_tipo_id: 18,
+              items: [
+                {
+                  id: null,
+                  identificador: content.id || 0,
+                  titulo: content.titulo || "",
+                  url: ":NO-URL"
+                }
+              ]
+            })
+
+            console.log("19, 20", conteudotipo)
+
+            setConteudoItems(tmp)
+            return
+          }
+
           tmp.push({
             conteudo_tipo_id: conteudotipo,
             items: [
               {
                 id: null,
-                identificador: content.id,
-                titulo: content.titulo,
+                identificador: content.id || 0,
+                titulo: content.titulo || "",
                 url: `https://inrpublicacoes.com.br/site/${linkName}/${content.id}/${sufix}`
               }
             ]
           })
+
+          setConteudoItems(tmp)
+          return
         } else {
+          console.log(conteudotipo)
+
+          if (
+            conteudotipo === 11 ||
+            conteudotipo === 13 ||
+            conteudotipo === 14 ||
+            conteudotipo === 16 ||
+            conteudotipo === 17 ||
+            conteudotipo === 19 ||
+            conteudotipo === 20
+          ) {
+            tmp[sessionIndex].items.push({
+              id: null,
+              identificador: content.id || 0,
+              titulo: content.titulo || "",
+              url: ":NO-URL"
+            })
+
+            setConteudoItems(tmp)
+            return
+          }
+
           tmp[sessionIndex].items.push({
             id: null,
-            identificador: content.id,
-            titulo: content.titulo,
+            identificador: content.id || 0,
+            titulo: content.titulo || "",
             url: `https://inrpublicacoes.com.br/site/${linkName}/${content.id}/${sufix}`
           })
+
+          setConteudoItems(tmp)
+          return
         }
       }
-
-      setConteudoItems(tmp)
     } catch (error: any) {
       setAlerMessage(error.message)
       setShowAlert(true)
@@ -699,6 +853,13 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         setEditadoem(response.data.edicao.editadoem)
       }
 
+      setAprovado("N")
+      setAprovadoem("")
+      setAprovadopor("")
+      setPublicado("N")
+      setPublicadoem("")
+      setPublicadopor("")
+
       setNeedSaveContent(false)
     } catch (error: any) {
       setAlerMessage(error.message)
@@ -739,6 +900,13 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         setEditadoem(response.data.edicao.editadoem)
       }
 
+      setAprovado("N")
+      setAprovadoem("")
+      setAprovadopor("")
+      setPublicado("N")
+      setPublicadoem("")
+      setPublicadopor("")
+
       setAlerMessage(response.message?.toString() ?? "")
       setShowAlert(true)
 
@@ -775,10 +943,15 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         if (!response.success)
           throw new Error(response.message?.toString() || "Erro")
 
+        setAprovado("N")
+        setAprovadoem("")
+        setAprovadopor("")
+        setPublicado("N")
+        setPublicadoem("")
+        setPublicadopor("")
         setNeedSaveBe(false)
-
+        setId(response.data?.boletim_id ?? null)
         router.push(`/boletim/${response.data?.boletim_id}`)
-
         setActiveStep(1)
       } catch (error: any) {
         setAlerMessage(error.message)
@@ -806,6 +979,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
   const publishThis = async () => {
     try {
       setLoading(true)
+
       const provider = new Provider()
       const response = await provider.call<{
         publicado: "N" | "S"
@@ -821,9 +995,9 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
 
       if (!response.success) throw new Error(response.message?.toString() || "")
 
-      setAprovado(response.data?.publicado || "")
-      setAprovadoem(response.data?.publicadoEm || "")
-      setAprovadopor(response.data?.publicadoPor || "")
+      setPublicado(response.data?.publicado || "")
+      setPublicadoem(response.data?.publicadoEm || "")
+      setPublicadopor(response.data?.publicadoPor || "")
 
       setLoading(false)
 
@@ -867,6 +1041,34 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
 
       setAlerMessage(response.message?.toString() || "")
       setShowAlert(true)
+    } catch (error: any) {
+      setAlerMessage(error.message)
+      setShowAlert(true)
+      setLoading(false)
+    } finally {
+      setLoading(false)
+      setTimeout(() => {
+        setShowAlert(false)
+      }, 6000)
+    }
+  }
+
+  const deleteBoletim = async () => {
+    try {
+      setLoading(true)
+
+      const provider = new Provider()
+      const response = await provider.call(
+        "api",
+        "boletim.deleteboletim",
+        undefined,
+        { idboletim: id },
+        { headers: { credential: ctx.usuario?.credencial } }
+      )
+
+      if (!response.success) throw new Error(response.message?.toString() || "")
+
+      router.push("/boletim?msg=1")
     } catch (error: any) {
       setAlerMessage(error.message)
       setShowAlert(true)
@@ -928,162 +1130,333 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         setShowAlert(false)
       }}
       outsideContent={
-        <Box
-          sx={{
-            width: "100%",
-            background: "#fff",
-            borderRadius: 2,
-            display: "flex",
-            justifyContent: "space-around",
-            alignContent: "center",
-            padding: 1
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center"
-                }}
-              >
-                <Tooltip title="Anterior">
-                  <IconButton
-                    disabled={activeStep === 0}
-                    onClick={() => {
-                      setActiveStep(actualValue => actualValue - 1)
+        <Paper sx={{ p: 1 }}>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+              <Tooltip title="Voltar">
+                <IconButton
+                  color="warning"
+                  onClick={() => {
+                    router.push("/boletim")
+                  }}
+                >
+                  <ArrowBack />
+                </IconButton>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={12} sm={12} md={10} lg={10} xl={10}>
+              <Grid container spacing={1}>
+                <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center"
                     }}
                   >
-                    <ArrowLeftIcon />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            </Grid>
+                    <Tooltip title="Anterior">
+                      <IconButton
+                        disabled={activeStep === 0}
+                        onClick={() => {
+                          setActiveStep(actualValue => actualValue - 1)
+                        }}
+                      >
+                        <ArrowLeftIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </Grid>
 
-            <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center"
-                }}
-              >
-                {publicado === "N" && (
-                  <Tooltip title="Salvar">
-                    <IconButton onClick={saveButtonAction}>
-                      <Save color="info" />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Box>
-            </Grid>
-
-            <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center"
-                }}
-              >
-                {aprovado === "N" && publicado === "N" && (
-                  <Tooltip title="Aprovar">
-                    <IconButton onClick={aproveThis}>
-                      <Check color="success" />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Box>
-            </Grid>
-
-            <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center"
-                }}
-              >
-                {publicado === "N" && (
-                  <Tooltip title="Publicar">
-                    <IconButton onClick={publishThis}>
-                      <Publish />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Box>
-            </Grid>
-
-            <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center"
-                }}
-              >
-                {publicado === "N" && id && (
-                  <Tooltip title="Excluir">
-                    <IconButton>
-                      <Delete color="error" />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Box>
-            </Grid>
-
-            <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "center"
-                }}
-              >
-                <Tooltip title="Próximo">
-                  <IconButton
-                    disabled={activeStep === 3}
-                    onClick={() => {
-                      if (activeStep === 0 && needSaveBe) {
-                        setAlerMessage("Salve antes de seguir adiante.")
-                        setShowAlert(true)
-                        setTimeout(() => {
-                          setShowAlert(false)
-                        }, 4000)
-
-                        return
-                      }
-
-                      if (activeStep === 1 && needSaveContent) {
-                        setAlerMessage("Salve antes de seguir adiante.")
-                        setShowAlert(true)
-                        setTimeout(() => {
-                          setShowAlert(false)
-                        }, 4000)
-
-                        return
-                      }
-
-                      if (activeStep === 2 && needSaveObservacao) {
-                        setAlerMessage("Salve antes de seguir adiante")
-                        setShowAlert(true)
-                        setTimeout(() => {
-                          setShowAlert(false)
-                        }, 4000)
-                        return
-                      }
-
-                      setActiveStep(actualValue => actualValue + 1)
+                <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center"
                     }}
                   >
-                    <ArrowRightIcon />
-                  </IconButton>
-                </Tooltip>
-              </Box>
+                    {publicado === "N" && (
+                      <Tooltip title="Salvar">
+                        <IconButton onClick={saveButtonAction}>
+                          <Save color="info" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </Box>
+                </Grid>
+
+                <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center"
+                    }}
+                  >
+                    {aprovado === "N" && publicado === "N" && (
+                      <Tooltip title="Aprovar">
+                        <IconButton onClick={aproveThis}>
+                          <Check color="success" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </Box>
+                </Grid>
+
+                <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center"
+                    }}
+                  >
+                    {publicado === "N" && (
+                      <Tooltip title="Publicar">
+                        <IconButton onClick={publishThis}>
+                          <Publish />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </Box>
+                </Grid>
+
+                <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center"
+                    }}
+                  >
+                    {publicado === "N" && id && (
+                      <Tooltip title="Excluir">
+                        <IconButton
+                          onClick={() => {
+                            setShowDeleteBoletim(true)
+                          }}
+                        >
+                          <Delete color="error" />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </Box>
+                </Grid>
+
+                <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center"
+                    }}
+                  >
+                    <Tooltip title="Próximo">
+                      <IconButton
+                        disabled={activeStep === 3}
+                        onClick={() => {
+                          if (activeStep === 0 && needSaveBe) {
+                            setAlerMessage("Salve antes de seguir adiante.")
+                            setShowAlert(true)
+                            setTimeout(() => {
+                              setShowAlert(false)
+                            }, 4000)
+
+                            return
+                          }
+
+                          if (activeStep === 1 && needSaveContent) {
+                            setAlerMessage("Salve antes de seguir adiante.")
+                            setShowAlert(true)
+                            setTimeout(() => {
+                              setShowAlert(false)
+                            }, 4000)
+
+                            return
+                          }
+
+                          if (activeStep === 2 && needSaveObservacao) {
+                            setAlerMessage("Salve antes de seguir adiante")
+                            setShowAlert(true)
+                            setTimeout(() => {
+                              setShowAlert(false)
+                            }, 4000)
+                            return
+                          }
+
+                          setActiveStep(actualValue => actualValue + 1)
+                        }}
+                      >
+                        <ArrowRightIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
-        </Box>
+        </Paper>
+
+        // <Box
+        //   sx={{
+        //     width: "100%",
+        //     background: "#fff",
+        //     borderRadius: 1,
+        //     display: "flex",
+        //     justifyContent: "space-between",
+        //     alignContent: "center",
+        //     padding: 1
+        //   }}
+        // >
+        //   <Grid container spacing={2}>
+        //     <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+        //       <Box
+        //         sx={{
+        //           width: "100%",
+        //           display: "flex",
+        //           justifyContent: "center"
+        //         }}
+        //       >
+        //         <Tooltip title="Anterior">
+        //           <IconButton
+        //             disabled={activeStep === 0}
+        //             onClick={() => {
+        //               setActiveStep(actualValue => actualValue - 1)
+        //             }}
+        //           >
+        //             <ArrowLeftIcon />
+        //           </IconButton>
+        //         </Tooltip>
+        //       </Box>
+        //     </Grid>
+
+        //     <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+        //       <Box
+        //         sx={{
+        //           width: "100%",
+        //           display: "flex",
+        //           justifyContent: "center"
+        //         }}
+        //       >
+        //         {publicado === "N" && (
+        //           <Tooltip title="Salvar">
+        //             <IconButton onClick={saveButtonAction}>
+        //               <Save color="info" />
+        //             </IconButton>
+        //           </Tooltip>
+        //         )}
+        //       </Box>
+        //     </Grid>
+
+        //     <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+        //       <Box
+        //         sx={{
+        //           width: "100%",
+        //           display: "flex",
+        //           justifyContent: "center"
+        //         }}
+        //       >
+        //         {aprovado === "N" && publicado === "N" && (
+        //           <Tooltip title="Aprovar">
+        //             <IconButton onClick={aproveThis}>
+        //               <Check color="success" />
+        //             </IconButton>
+        //           </Tooltip>
+        //         )}
+        //       </Box>
+        //     </Grid>
+
+        //     <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+        //       <Box
+        //         sx={{
+        //           width: "100%",
+        //           display: "flex",
+        //           justifyContent: "center"
+        //         }}
+        //       >
+        //         {publicado === "N" && (
+        //           <Tooltip title="Publicar">
+        //             <IconButton onClick={publishThis}>
+        //               <Publish />
+        //             </IconButton>
+        //           </Tooltip>
+        //         )}
+        //       </Box>
+        //     </Grid>
+
+        //     <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+        //       <Box
+        //         sx={{
+        //           width: "100%",
+        //           display: "flex",
+        //           justifyContent: "center"
+        //         }}
+        //       >
+        //         {publicado === "N" && id && (
+        //           <Tooltip title="Excluir">
+        //             <IconButton
+        //               onClick={() => {
+        //                 setShowDeleteBoletim(true)
+        //               }}
+        //             >
+        //               <Delete color="error" />
+        //             </IconButton>
+        //           </Tooltip>
+        //         )}
+        //       </Box>
+        //     </Grid>
+
+        //     <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
+        //       <Box
+        //         sx={{
+        //           width: "100%",
+        //           display: "flex",
+        //           justifyContent: "center"
+        //         }}
+        //       >
+        //         <Tooltip title="Próximo">
+        //           <IconButton
+        //             disabled={activeStep === 3}
+        //             onClick={() => {
+        //               if (activeStep === 0 && needSaveBe) {
+        //                 setAlerMessage("Salve antes de seguir adiante.")
+        //                 setShowAlert(true)
+        //                 setTimeout(() => {
+        //                   setShowAlert(false)
+        //                 }, 4000)
+
+        //                 return
+        //               }
+
+        //               if (activeStep === 1 && needSaveContent) {
+        //                 setAlerMessage("Salve antes de seguir adiante.")
+        //                 setShowAlert(true)
+        //                 setTimeout(() => {
+        //                   setShowAlert(false)
+        //                 }, 4000)
+
+        //                 return
+        //               }
+
+        //               if (activeStep === 2 && needSaveObservacao) {
+        //                 setAlerMessage("Salve antes de seguir adiante")
+        //                 setShowAlert(true)
+        //                 setTimeout(() => {
+        //                   setShowAlert(false)
+        //                 }, 4000)
+        //                 return
+        //               }
+
+        //               setActiveStep(actualValue => actualValue + 1)
+        //             }}
+        //           >
+        //             <ArrowRightIcon />
+        //           </IconButton>
+        //         </Tooltip>
+        //       </Box>
+        //     </Grid>
+        //   </Grid>
+        // </Box>
       }
     >
       <Grid container spacing={2}>
@@ -1520,6 +1893,12 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                 </InputLabel>
 
                                 <Select
+                                  disabled={
+                                    props.data.publicado &&
+                                    props.data.publicado === "S"
+                                      ? true
+                                      : false
+                                  }
                                   id="tipoConteudo"
                                   label="Tipo de Conteúdo"
                                   value={conteudotipo}
@@ -1552,6 +1931,12 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                   Contéudo
                                 </InputLabel>
                                 <Select
+                                  disabled={
+                                    props.data.publicado &&
+                                    props.data.publicado === "S"
+                                      ? true
+                                      : false
+                                  }
                                   id="ContentBoletimSelect"
                                   label="Contéudo"
                                   labelId="ContentBoletimLabel"
@@ -1752,7 +2137,7 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                             height: "100%",
                                             display: "flex",
                                             flexDirection: "row",
-                                            justifyContent: "center",
+                                            justifyContent: "left",
                                             alignItems: "center",
                                             border: "0.5px solid #424242",
                                             paddingLeft: "10px",
@@ -1761,7 +2146,6 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                             paddingBottom: "5px"
                                           }}
                                         >
-                                          {/* AQUI */}
                                           <Box
                                             sx={{
                                               minWidth: "64%",
@@ -1772,7 +2156,9 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                             {conteudoItem.titulo}
                                           </Box>
 
-                                          {item.conteudo_tipo_id === 11 && (
+                                          {conteudoItem.titulo.includes(
+                                            "[selecione a data]"
+                                          ) && (
                                             <Box
                                               sx={{
                                                 minWidth: "6%",
@@ -1785,7 +2171,6 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                                 <IconButton
                                                   size="small"
                                                   onClick={() => {
-                                                    // AQUI 2
                                                     setShowAcumuladoData(true)
                                                   }}
                                                 >
@@ -1795,30 +2180,33 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                             </Box>
                                           )}
 
-                                          <Box
-                                            sx={{
-                                              minWidth: "6%",
-                                              display: "flex",
-                                              justifyContent: "center",
-                                              alignItems: "center"
-                                            }}
-                                          >
-                                            <Tooltip title="Subir uma posição">
-                                              <IconButton
-                                                size="small"
-                                                onClick={() => {
-                                                  if (!needSaveContent)
-                                                    setNeedSaveContent(true)
-                                                  upConteudoItem(
-                                                    item.conteudo_tipo_id,
-                                                    cii
-                                                  )
+                                          {!props.data.publicado ||
+                                            (props.data.publicado === "N" && (
+                                              <Box
+                                                sx={{
+                                                  minWidth: "6%",
+                                                  display: "flex",
+                                                  justifyContent: "center",
+                                                  alignItems: "center"
                                                 }}
                                               >
-                                                <ArrowUpward />
-                                              </IconButton>
-                                            </Tooltip>
-                                          </Box>
+                                                <Tooltip title="Subir uma posição">
+                                                  <IconButton
+                                                    size="small"
+                                                    onClick={() => {
+                                                      if (!needSaveContent)
+                                                        setNeedSaveContent(true)
+                                                      upConteudoItem(
+                                                        item.conteudo_tipo_id,
+                                                        cii
+                                                      )
+                                                    }}
+                                                  >
+                                                    <ArrowUpward />
+                                                  </IconButton>
+                                                </Tooltip>
+                                              </Box>
+                                            ))}
 
                                           <Box
                                             sx={{
@@ -1838,95 +2226,112 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                             </Tooltip>
                                           </Box>
 
-                                          <Box
-                                            sx={{
-                                              minWidth: "6%",
-                                              display: "flex",
-                                              justifyContent: "center",
-                                              alignItems: "center"
-                                            }}
-                                          >
-                                            <Tooltip title="Descer uma posição">
-                                              <IconButton
-                                                size="small"
-                                                onClick={() => {
-                                                  if (!needSaveContent)
-                                                    setNeedSaveContent(true)
-                                                  downConteudoItem(
-                                                    item.conteudo_tipo_id,
-                                                    cii
-                                                  )
+                                          {!props.data.publicado ||
+                                            (props.data.publicado === "N" && (
+                                              <Box
+                                                sx={{
+                                                  minWidth: "6%",
+                                                  display: "flex",
+                                                  justifyContent: "center",
+                                                  alignItems: "center"
                                                 }}
                                               >
-                                                <ArrowDownward />
-                                              </IconButton>
-                                            </Tooltip>
-                                          </Box>
+                                                <Tooltip title="Descer uma posição">
+                                                  <IconButton
+                                                    size="small"
+                                                    onClick={() => {
+                                                      if (!needSaveContent)
+                                                        setNeedSaveContent(true)
+                                                      downConteudoItem(
+                                                        item.conteudo_tipo_id,
+                                                        cii
+                                                      )
+                                                    }}
+                                                  >
+                                                    <ArrowDownward />
+                                                  </IconButton>
+                                                </Tooltip>
+                                              </Box>
+                                            ))}
 
-                                          <Box
-                                            sx={{
-                                              minWidth: "6%",
-                                              display: "flex",
-                                              justifyContent: "center",
-                                              alignItems: "center"
-                                            }}
-                                          >
-                                            <Tooltip title="Excluir">
-                                              <IconButton
-                                                size="small"
-                                                onClick={() => {
-                                                  deleteThisItem(
-                                                    item.conteudo_tipo_id,
-                                                    cii
-                                                  )
+                                          {!props.data.publicado ||
+                                            (props.data.publicado === "N" && (
+                                              <Box
+                                                sx={{
+                                                  minWidth: "6%",
+                                                  display: "flex",
+                                                  justifyContent: "center",
+                                                  alignItems: "center"
                                                 }}
                                               >
-                                                <Delete />
-                                              </IconButton>
-                                            </Tooltip>
-                                          </Box>
+                                                <Tooltip title="Excluir">
+                                                  <IconButton
+                                                    size="small"
+                                                    onClick={() => {
+                                                      deleteThisItem(
+                                                        item.conteudo_tipo_id,
+                                                        cii
+                                                      )
+                                                    }}
+                                                  >
+                                                    <Delete />
+                                                  </IconButton>
+                                                </Tooltip>
+                                              </Box>
+                                            ))}
 
-                                          <Box
-                                            sx={{
-                                              minWidth: "6%",
-                                              display: "flex",
-                                              justifyContent: "center",
-                                              alignItems: "center"
-                                            }}
-                                          >
-                                            <Tooltip title="Visualizar">
-                                              <IconButton
-                                                size="small"
-                                                onClick={() => {
-                                                  window.open(
-                                                    conteudoItem.url,
-                                                    "_blank"
-                                                  )
-                                                }}
-                                              >
-                                                <Visibility />
-                                              </IconButton>
-                                            </Tooltip>
-                                          </Box>
+                                          {!conteudoItem.url.includes(
+                                            ":NO-URL"
+                                          ) && (
+                                            <Box
+                                              sx={{
+                                                minWidth: "6%",
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center"
+                                              }}
+                                            >
+                                              <Tooltip title="Visualizar">
+                                                <IconButton
+                                                  size="small"
+                                                  onClick={() => {
+                                                    window.open(
+                                                      conteudoItem.url,
+                                                      "_blank"
+                                                    )
+                                                  }}
+                                                >
+                                                  <Visibility />
+                                                </IconButton>
+                                              </Tooltip>
+                                            </Box>
+                                          )}
                                         </Box>
                                       </ListItem>
                                     ))}
                                   </List>
                                 </AccordionDetails>
-                                <AccordionActions>
-                                  <Button
-                                    color="error"
-                                    variant="contained"
-                                    endIcon={<Delete />}
-                                    onClick={() => {
-                                      deleteThisSession(item.conteudo_tipo_id)
-                                    }}
-                                  >
-                                    {`Excluir ${
-                                      sessionNames[item.conteudo_tipo_id - 1]
-                                    }`}
-                                  </Button>
-                                </AccordionActions>
+                                {!props.data.publicado ||
+                                  (props.data.publicado === "N" && (
+                                    <AccordionActions>
+                                      <Button
+                                        color="error"
+                                        variant="contained"
+                                        endIcon={<Delete />}
+                                        onClick={() => {
+                                          deleteThisSession(
+                                            item.conteudo_tipo_id
+                                          )
+                                        }}
+                                      >
+                                        {`Excluir ${
+                                          sessionNames[
+                                            item.conteudo_tipo_id - 1
+                                          ]
+                                        }`}
+                                      </Button>
+                                    </AccordionActions>
+                                  ))}
                               </Accordion>
                             ))}
                           </Box>
@@ -2084,7 +2489,12 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
           </Paper>
         </Grid>
       </Grid>
-      <Modal open={showAcumuladoData}>
+      <Modal
+        open={showAcumuladoData}
+        onClose={() => {
+          setShowAcumuladoData(false)
+        }}
+      >
         <Box
           sx={{
             position: "absolute" as "absolute",
@@ -2130,8 +2540,10 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                     const tmp = [...conteudoItems]
 
                     for (let i = 0; i < tmp.length; i++) {
-                      if (tmp[i].conteudo_tipo_id === 11) {
-                        for (let y = 0; y < tmp[i].items.length; y++) {
+                      for (let y = 0; y < tmp[i].items.length; y++) {
+                        if (
+                          tmp[i].items[y].titulo.includes("[selecione a data]")
+                        ) {
                           tmp[i].items[
                             y
                           ].titulo = `Clique aqui e acesse o conteúdo acumulado até o dia ${e.format(
@@ -2146,6 +2558,89 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                   }}
                 />
               </LocalizationProvider>
+            </Grid>
+          </Grid>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={showDeleteBoletim}
+        onClose={() => {
+          setShowDeleteBoletim(false)
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 450,
+            bgcolor: "background.paper",
+            border: "1px solid #000",
+            boxShadow: 24,
+            p: 4
+          }}
+        >
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <Box
+                sx={{
+                  width: "100%",
+                  padding: 1,
+                  background: "#212121",
+                  borderRadius: 1
+                }}
+              >
+                <Grid container justifyItems="center" alignItems="center">
+                  <Grid item xs={12} sm={12} md={2} lg={2} xl={2}>
+                    <Icon sx={{ color: "#FAFAFA" }} fontSize="large">
+                      delete
+                    </Icon>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={10} lg={10} xl={10}>
+                    <Typography
+                      variant="body1"
+                      sx={{ textTransform: "uppercase", color: "#FAFAFA" }}
+                    >
+                      Confirmação de exclusão
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <Typography variant="body1">
+                Tem certeza que voce deseja excluir esse boletim ?
+              </Typography>
+            </Grid>
+
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <Box
+                sx={{
+                  width: "100%",
+                  justifyContent: "space-around",
+                  display: "flex"
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="warning"
+                  onClick={deleteBoletim}
+                >
+                  sim
+                </Button>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => {
+                    setShowDeleteBoletim(false)
+                  }}
+                >
+                  Não
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </Box>

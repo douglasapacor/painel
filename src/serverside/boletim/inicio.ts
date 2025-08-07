@@ -3,7 +3,9 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next"
 import { serversideReponse } from "../core/serversideResponse"
 import ServersideSystem from "../core/ServersideSystem"
 
-export type boletimInicioType = {}
+export type boletimInicioType = {
+  tipoLista: { id: number; nome: string }[]
+}
 
 const inicio = async (
   context: GetServerSidePropsContext
@@ -11,6 +13,18 @@ const inicio = async (
   try {
     const response = new ServersideSystem<boletimInicioType>()
     const provider = new Provider()
+
+    const tipoLista = await provider.call<{ id: number; nome: string }[]>(
+      "api",
+      "boletim.tipo",
+      undefined,
+      undefined,
+      {
+        headers: {
+          credential: context.req.cookies["credential"]
+        }
+      }
+    )
 
     response.metadata = {
       url: "/boletim",
@@ -21,6 +35,11 @@ const inicio = async (
         edicao: null
       }
     }
+
+    response.data = {
+      tipoLista: tipoLista.data || []
+    }
+
     return {
       props: response.json()
     }

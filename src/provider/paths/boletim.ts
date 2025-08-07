@@ -36,6 +36,14 @@ const boletim: providerpath = {
   publicarboletim: {
     method: "post",
     url: "/boletim/{:idboletim}/publicar"
+  },
+  deleteboletim: {
+    method: "delete",
+    url: "/boletim/{:idboletim}/excluir"
+  },
+  listaboletim: {
+    method: "post",
+    url: "/boletim"
   }
 }
 

@@ -12,6 +12,10 @@ const classificador: providerpath = {
   rs: {
     method: "get",
     url: "/classificador?id=2&limit={:limite}&page={:pagina}"
+  },
+  atoanterior: {
+    method: "get",
+    url: "/classificador/previous-acts"
   }
 }
 
