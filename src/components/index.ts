@@ -7,7 +7,7 @@ import MobileNavbar from "./MobileNavbar"
 import NavBar from "./NavBar"
 import PanelFrame from "./PanelFrame"
 import UserDrawer from "./UserDrawer"
-import WithAuth from "./withAuth"
+import WithAuth from "./WithAuth"
 
 export {
   ApplicationDrawer,
