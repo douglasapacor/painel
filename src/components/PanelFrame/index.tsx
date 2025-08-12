@@ -24,7 +24,7 @@ import {
 import { useRouter } from "next/router"
 import { FC, ReactNode } from "react"
 import ApplicationDrawer from "../ApplicationDrawer"
-import LoadingBox from "../loadingBox"
+import LoadingBox from "../LoadingBox"
 import Location from "../Location"
 import UserDrawer from "../UserDrawer"
 import ApplicationBar from "./ApplicationBar"
@@ -419,3 +419,5 @@ export const PanelFrame: FC<{
     </Box>
   )
 }
+
+export default PanelFrame
