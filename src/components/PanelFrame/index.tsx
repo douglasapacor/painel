@@ -24,7 +24,6 @@ import {
 import { useRouter } from "next/router"
 import { FC, ReactNode } from "react"
 import ApplicationDrawer from "../ApplicationDrawer"
-import LoadingBox from "../LoadingBox"
 import Location from "../Location"
 import UserDrawer from "../UserDrawer"
 import ApplicationBar from "./ApplicationBar"
@@ -187,7 +186,22 @@ export const PanelFrame: FC<{
           ></Box>
 
           {props.loading ? (
-            <LoadingBox />
+            <Box
+              sx={{
+                width: "100%",
+                minHeight: "70vh",
+                maxWidth: 360,
+                bgcolor: theme => theme.palette.primary.light,
+                display: "flex",
+                justifyItems: "center",
+                alignContent: "center",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+              component="nav"
+            >
+              <CircularProgress size={20} />
+            </Box>
           ) : (
             <List>
               <ListItem>
