@@ -23,10 +23,7 @@ import {
 } from "@mui/material"
 import { useRouter } from "next/router"
 import { FC, ReactNode } from "react"
-import ApplicationDrawer from "../ApplicationDrawer"
-import LoadingBox from "../LoadingBox"
-import Location from "../Location"
-import UserDrawer from "../UserDrawer"
+import { ApplicationDrawer, LoadingBox, Location, UserDrawer } from "../"
 import ApplicationBar from "./ApplicationBar"
 
 export type local = {
@@ -49,6 +46,7 @@ export const PanelFrame: FC<{
 }> = ({ ...props }) => {
   const router = useRouter()
   const masterContext = useCtxSuperior()
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -70,20 +68,6 @@ export const PanelFrame: FC<{
               <Menu />
             </IconButton>
           </Box>
-
-          {/* <Box sx={{ display: "inline-flex", alignItems: "center" }}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={() => {
-                setRigthDrawer(rtOpen => !rtOpen)
-              }}
-            >
-              <Icon>notifications</Icon>
-              <Icon>notifications_active</Icon>
-              <Icon>notifications_paused</Icon>
-            </IconButton>
-          </Box> */}
 
           <Box sx={{ display: "inline-flex", alignItems: "center" }}>
             <IconButton
