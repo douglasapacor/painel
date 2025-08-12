@@ -252,9 +252,10 @@ export const PanelFrame: FC<{
               {masterContext.usuario &&
                 masterContext.usuario.configuracoes &&
                 masterContext.usuario.configuracoes.rightwebpnl &&
-                masterContext.usuario.configuracoes.rightwebpnl.map(item =>
+                masterContext.usuario.configuracoes.rightwebpnl.map((item, i) =>
                   masterContext.rigth ? (
                     <ListItemButton
+                      key={`item-panel-frame-${i}-item`}
                       onClick={() => {
                         router.push(item.url)
                       }}
@@ -265,7 +266,11 @@ export const PanelFrame: FC<{
                       <ListItemText primary={item.nome} />
                     </ListItemButton>
                   ) : (
-                    <Tooltip title={item.nome} placement="right">
+                    <Tooltip
+                      key={`item-panel-frame-${i}-item`}
+                      title={item.nome}
+                      placement="right"
+                    >
                       <ListItemButton
                         onClick={() => {
                           router.push(item.url)

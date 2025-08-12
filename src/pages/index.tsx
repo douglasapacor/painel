@@ -1,7 +1,7 @@
 import { PanelFrame } from "@/components"
 import { NextPage } from "next"
 
-const home: NextPage = () => {
+const Home: NextPage = () => {
   return (
     <PanelFrame dense>
       {/* <Grid container spacing={5}>
@@ -32,4 +32,4 @@ const home: NextPage = () => {
   )
 }
 
-export default home
+export default Home

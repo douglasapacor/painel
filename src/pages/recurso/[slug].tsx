@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps<
 }
 //#endregion getServersideProps
 
-const recursoSelecionado: NextPage<
+const RecursoSelecionado: NextPage<
   serversideReponse<recursoManagementType>
 > = props => {
   //#region states
@@ -593,4 +593,4 @@ const recursoSelecionado: NextPage<
   )
 }
 
-export default recursoSelecionado
+export default RecursoSelecionado

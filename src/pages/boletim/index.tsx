@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps<
 }
 //#endregion getServersideProps
 
-const home: NextPage<serversideReponse<boletimInicioType>> = props => {
+const BoletimHome: NextPage<serversideReponse<boletimInicioType>> = props => {
   //#region states
   const [alerMessage, setAlerMessage] = useState("")
   const [showAlert, setShowAlert] = useState(false)
@@ -362,4 +362,4 @@ const home: NextPage<serversideReponse<boletimInicioType>> = props => {
   )
 }
 
-export default home
+export default BoletimHome

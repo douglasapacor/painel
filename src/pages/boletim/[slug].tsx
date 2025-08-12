@@ -176,7 +176,7 @@ const linkNames = [
 ]
 //#endregion local-types
 
-const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
+const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
   //#region states
   const [alerMessage, setAlerMessage] = useState("")
   const [showAlert, setShowAlert] = useState(false)
@@ -2487,4 +2487,4 @@ const novo: NextPage<serversideReponse<boletimManagementType>> = props => {
   )
 }
 
-export default novo
+export default Novo

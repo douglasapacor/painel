@@ -4,7 +4,7 @@ import { Grid, InputAdornment, Paper, TextField } from "@mui/material"
 import { NextPage } from "next"
 import { useState } from "react"
 
-const quadros: NextPage<any> = props => {
+const Quadros: NextPage<any> = props => {
   const [alerMessage, setAlerMessage] = useState("")
   const [showAlert, setShowAlert] = useState(false)
   return (
@@ -59,4 +59,4 @@ const quadros: NextPage<any> = props => {
   )
 }
 
-export default quadros
+export default Quadros

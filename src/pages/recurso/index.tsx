@@ -36,7 +36,7 @@ export const getServerSideProps: GetServerSideProps<
 }
 //#endregion getServersideProps
 
-const recursos: NextPage<serversideReponse<recursoHomeType>> = props => {
+const Recursos: NextPage<serversideReponse<recursoHomeType>> = props => {
   //#region states
   const [alerMessage, setAlerMessage] = useState("")
   const [showAlert, setShowAlert] = useState(false)
@@ -491,4 +491,4 @@ const recursos: NextPage<serversideReponse<recursoHomeType>> = props => {
   )
 }
 
-export default recursos
+export default Recursos

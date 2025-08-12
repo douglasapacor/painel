@@ -1,5 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
-import { defaultResponse } from "./props"
+export type defaultResponse<T = any> = {
+  success: boolean
+  message?: string
+  data?: T
+}
 
 const instance = axios.create()
 
@@ -145,9 +149,11 @@ const del = async <T = any>(
   }
 }
 
-export default {
+const fetch = {
   get,
   post,
   put,
   del
 }
+
+export default fetch
