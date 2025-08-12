@@ -1,4 +1,4 @@
-export default [
+const colors = [
   {
     code: "#F44336",
     name: "Red"
@@ -76,3 +76,5 @@ export default [
     name: "Blue Grey"
   }
 ]
+
+export default colors

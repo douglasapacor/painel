@@ -18,12 +18,13 @@ import {
   ListItemText,
   Snackbar,
   Toolbar,
+  Tooltip,
   Typography
 } from "@mui/material"
 import { useRouter } from "next/router"
 import { FC, ReactNode } from "react"
 import ApplicationDrawer from "../ApplicationDrawer"
-import LoadingBox from "../loadingBox"
+import LoadingBox from "../LoadingBox"
 import Location from "../Location"
 import UserDrawer from "../UserDrawer"
 import ApplicationBar from "./ApplicationBar"
@@ -134,49 +135,40 @@ export const PanelFrame: FC<{
             }}
             component="nav"
           >
-            <ListItemButton
-              onClick={() => {
-                router.push(`/recurso`)
-              }}
-            >
-              <ListItemIcon>
-                <Icon>home</Icon>
-              </ListItemIcon>
-              <ListItemText primary={"Recurso"} />
-            </ListItemButton>
-          </List>
-
-          {/* {props.loading ? (
-            <LoadingBox />
-          ) : (
-            <List
-              sx={{
-                width: "100%",
-                maxWidth: 360
-              }}
-              component="nav"
-            >
-              {masterContext.data
-                ? masterContext.data.access.map((item: any, index: any) => {
-                    return item.visible && item.deviceId === 1 ? (
-                      <ListItemButton
-                        key={`menu-left-${index}-item`}
-                        onClick={() => {
-                          router.push(`/painel${item.path}`)
-                        }}
-                      >
-                        <ListItemIcon>
-                          <Icon>{item.icon}</Icon>
-                        </ListItemIcon>
-                        <ListItemText primary={item.name} />
-                      </ListItemButton>
-                    ) : (
-                      ""
+            <Tooltip title="Início" placement="right">
+              <ListItemButton
+                onClick={() => {
+                  router.push(`/`)
+                }}
+              >
+                <ListItemIcon>
+                  <Icon>home</Icon>
+                </ListItemIcon>
+                <ListItemText primary={"Início"} />
+              </ListItemButton>
+            </Tooltip>
+            {masterContext.usuario
+              ? masterContext.usuario.configuracoes
+                ? masterContext.usuario.configuracoes.leftwebpnl
+                  ? masterContext.usuario.configuracoes.leftwebpnl.map(
+                      (item, index) => (
+                        <ListItemButton
+                          key={`list-item-index-${index}-panel-item`}
+                          onClick={() => {
+                            router.push(item.url)
+                          }}
+                        >
+                          <ListItemIcon>
+                            <Icon>{item.icone}</Icon>
+                          </ListItemIcon>
+                          <ListItemText primary={item.nome} />
+                        </ListItemButton>
+                      )
                     )
-                  })
-                : ""}
-            </List>
-          )} */}
+                  : ""
+                : ""
+              : ""}
+          </List>
         </Toolbar>
       </ApplicationDrawer>
 
@@ -219,16 +211,18 @@ export const PanelFrame: FC<{
                     justifyContent: "center"
                   }}
                 >
-                  {/* {masterContext.data && masterContext.data.photo !== "" ? (
-                    <Avatar
-                      sx={{ width: 102, height: 102 }}
-                      src={masterContext.data.photo}
-                    />
+                  {masterContext.usuario ? (
+                    masterContext.usuario.foto ? (
+                      <Avatar
+                        sx={{ width: 102, height: 102 }}
+                        src={masterContext.usuario.foto}
+                      />
+                    ) : (
+                      <Avatar sx={{ width: 102, height: 102 }} />
+                    )
                   ) : (
                     <Avatar sx={{ width: 102, height: 102 }} />
-                  )} */}
-
-                  <Avatar sx={{ width: 102, height: 102 }} />
+                  )}
                 </Box>
               </ListItem>
               <ListItem>
@@ -255,27 +249,40 @@ export const PanelFrame: FC<{
                 <Typography variant="caption">MENU DO USUÁRIO</Typography>
               </ListItem>
 
-              {/* {masterContext.data
-                ? masterContext.data.configuracoes.map(
-                    (item: any, index: any) => {
-                      return item.visible && item.deviceId === 2 ? (
-                        <ListItemButton
-                          key={`menu-left-${index}-item`}
-                          onClick={() => {
-                            router.push(`/painel${item.path}`)
-                          }}
-                        >
-                          <ListItemIcon>
-                            <Icon>{item.icon}</Icon>
-                          </ListItemIcon>
-                          <ListItemText primary={item.name} />
-                        </ListItemButton>
-                      ) : (
-                        ""
-                      )
-                    }
+              {masterContext.usuario &&
+                masterContext.usuario.configuracoes &&
+                masterContext.usuario.configuracoes.rightwebpnl &&
+                masterContext.usuario.configuracoes.rightwebpnl.map((item, i) =>
+                  masterContext.rigth ? (
+                    <ListItemButton
+                      key={`item-panel-frame-${i}-item`}
+                      onClick={() => {
+                        router.push(item.url)
+                      }}
+                    >
+                      <ListItemIcon>
+                        <Icon>{item.icone}</Icon>
+                      </ListItemIcon>
+                      <ListItemText primary={item.nome} />
+                    </ListItemButton>
+                  ) : (
+                    <Tooltip
+                      key={`item-panel-frame-${i}-item`}
+                      title={item.nome}
+                      placement="right"
+                    >
+                      <ListItemButton
+                        onClick={() => {
+                          router.push(item.url)
+                        }}
+                      >
+                        <ListItemIcon>
+                          <Icon>{item.icone}</Icon>
+                        </ListItemIcon>
+                      </ListItemButton>
+                    </Tooltip>
                   )
-                : ""} */}
+                )}
 
               <Divider />
 
@@ -417,3 +424,5 @@ export const PanelFrame: FC<{
     </Box>
   )
 }
+
+export default PanelFrame

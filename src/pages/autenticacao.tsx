@@ -1,6 +1,6 @@
-import entrypoints from "@/config/entrypoints"
+//#region imports
 import { useCtxSuperior } from "@/context/Master"
-import fetchApi from "@/lib/fetch"
+import Provider from "@/provider"
 import { Close, Visibility, VisibilityOff } from "@mui/icons-material"
 import {
   Box,
@@ -20,8 +20,10 @@ import type { NextPage } from "next"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import { useState } from "react"
+//#endregion imports
 
 const AutenticacaoPainel: NextPage = () => {
+  //#region states
   const [user, setUser] = useState<string>("")
   const [userError, setUserError] = useState<boolean>(false)
   const [password, setPassword] = useState<string>("")
@@ -31,12 +33,16 @@ const AutenticacaoPainel: NextPage = () => {
   const [alert, setAlert] = useState<boolean>(false)
   const [alertMessage, setAlertMessage] = useState<string>("")
   const [lock, setLock] = useState<boolean>(false)
+  //#endregion states
+
+  //#region static
   const router = useRouter()
   const masterContext = useCtxSuperior()
+  //#endregion static
+
+  //#region functions
   const closeAlert = () => setAlert(false)
-
   const handleClickShowPassword = () => setShowPassword(show => !show)
-
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -47,10 +53,6 @@ const AutenticacaoPainel: NextPage = () => {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault()
-  }
-
-  const goToRecoveryPassword = () => {
-    router.push("/recuperar-senha")
   }
 
   const autehticationUser = async () => {
@@ -77,15 +79,21 @@ const AutenticacaoPainel: NextPage = () => {
 
       setLock(true)
 
-      const result = await fetchApi.post(entrypoints.seguranca.panelLogin, {
-        login: user,
-        senha: password,
-        keep: keepConnected
-      })
+      const provider = new Provider()
+      const providerResponse = await provider.call<any>(
+        "api",
+        "seguranca.autenticacao",
+        {
+          login: user,
+          senha: password,
+          keep: keepConnected
+        }
+      )
 
-      if (!result.success) throw new Error(result.message)
+      if (!providerResponse.success)
+        throw new Error(providerResponse.message?.toString())
 
-      masterContext.login(result.data)
+      masterContext.login(providerResponse.data)
 
       router.push("/")
     } catch (error: any) {
@@ -94,6 +102,7 @@ const AutenticacaoPainel: NextPage = () => {
       setAlert(true)
     }
   }
+  //#endregion functions
 
   return (
     <Box
@@ -128,6 +137,7 @@ const AutenticacaoPainel: NextPage = () => {
                       }}
                     >
                       <Image
+                        priority
                         src="/logos/logo_inr.svg"
                         alt="Logo inr desde 1989"
                         width={120}
@@ -204,13 +214,13 @@ const AutenticacaoPainel: NextPage = () => {
                         }
                         label="Manter Conectado"
                       />
-                      <Button
+                      {/* <Button
                         disabled={lock}
                         variant="text"
                         onClick={goToRecoveryPassword}
                       >
                         Esqueci minha senha
-                      </Button>
+                      </Button> */}
                     </Box>
                   </Grid>
                   <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
