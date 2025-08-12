@@ -1,4 +1,4 @@
-import { PanelFrame } from "@/components"
+import PanelFrame from "@/components/PanelFrame"
 import { NextPage } from "next"
 
 const Home: NextPage = () => {

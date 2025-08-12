@@ -1,5 +1,6 @@
 //#region imports
-import { DataGrid, PanelFrame } from "@/components"
+import DataGrid from "@/components/DataGrid"
+import PanelFrame from "@/components/PanelFrame"
 import { useCtxSuperior } from "@/context/Master"
 import Provider from "@/provider"
 import inicio, { boletimInicioType } from "@/serverside/boletim/inicio"
