@@ -12,7 +12,7 @@ export default class FetchSystem {
 
   constructor() {
     this.instance = {
-      api: axios.create({ baseURL: "http://localhost:3001" })
+      api: axios.create({ baseURL: "https://api.publicacoesinr.com.br" })
     }
   }
 
