@@ -1,4 +1,4 @@
-import { PanelFrame } from "@/components"
+import PanelFrame from "@/components/PanelFrame"
 import { Search } from "@mui/icons-material"
 import { Grid, InputAdornment, Paper, TextField } from "@mui/material"
 import { NextPage } from "next"

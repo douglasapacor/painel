@@ -1,3 +1,7 @@
+import theme from "@/styles/theme"
+import createCache from "@emotion/cache"
+import createEmotionServer from "@emotion/server/create-instance"
+import { AppType } from "next/app"
 import Document, {
   DocumentContext,
   DocumentProps,
@@ -6,12 +10,8 @@ import Document, {
   Main,
   NextScript
 } from "next/document"
-import theme from "@/styles/theme"
-import createEmotionServer from "@emotion/server/create-instance"
-import { AppType } from "next/app"
 import React, { JSX } from "react"
 import { MyAppProps } from "./_app"
-import createCache from "@emotion/cache"
 
 const isBrowser = typeof document !== "undefined"
 

@@ -1,5 +1,5 @@
 //#region imports
-import { PanelFrame } from "@/components"
+import PanelFrame from "@/components/PanelFrame"
 import { useCtxSuperior } from "@/context/Master"
 import sanitize from "@/lib/sanitize"
 import Provider from "@/provider"
