@@ -1,6 +1,7 @@
 import MuiAppBar from "@mui/material/AppBar"
 import { styled } from "@mui/material/styles"
 const drawerWidth: number = 300
+
 const ApplicationBar: any = styled(MuiAppBar, {
   shouldForwardProp: prop => prop !== "open"
 })<{ open: boolean }>(({ theme, open }) => ({
