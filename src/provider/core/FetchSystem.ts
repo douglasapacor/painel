@@ -9,10 +9,16 @@ import UnauthorizedError from "./UnauthorizedError"
 
 export default class FetchSystem {
   public instance: { api: AxiosInstance }
+  private url: string
 
   constructor() {
+    this.url =
+      process.env.NODE_ENV === "production"
+        ? "https://api.publicacoesinr.com.br"
+        : "http://localhost:3001"
+
     this.instance = {
-      api: axios.create({ baseURL: "https://api.publicacoesinr.com.br" })
+      api: axios.create({ baseURL: this.url })
     }
   }
 

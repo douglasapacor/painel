@@ -1,15 +1,15 @@
 import { useCtxSuperior } from "@/context/Master"
 import { useRouter } from "next/router"
-import { useEffect } from "react"
+import { ComponentType, useEffect } from "react"
 
-function WithAuth(Component: React.ComponentType) {
+function WithAuth(Component: ComponentType) {
   return function ProtectedRoute(props: any) {
     const { usuario } = useCtxSuperior()
     const router = useRouter()
 
     useEffect(() => {
       if (!usuario) {
-        router.push("/painel/autenticacao")
+        router.push("/autenticacao")
       }
     }, [usuario, router])
 
