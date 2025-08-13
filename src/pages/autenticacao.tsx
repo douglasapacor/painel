@@ -1,6 +1,5 @@
 //#region imports
 import { useCtxSuperior } from "@/context/Master"
-import Provider from "@/provider"
 import { Close, Visibility, VisibilityOff } from "@mui/icons-material"
 import {
   Box,
@@ -16,6 +15,7 @@ import {
   Paper,
   Snackbar
 } from "@mui/material"
+import axios from "axios"
 import type { NextPage } from "next"
 import Image from "next/image"
 import { useRouter } from "next/router"
@@ -79,23 +79,22 @@ const AutenticacaoPainel: NextPage = () => {
 
       setLock(true)
 
-      const provider = new Provider()
-      const providerResponse = await provider.call<any>(
-        "api",
-        "seguranca.autenticacao",
+      const axiosResponse = await axios.post(
+        "/api/autenticacao",
         {
           login: user,
           senha: password,
           keep: keepConnected
-        }
+        },
+        { withCredentials: true }
       )
 
-      if (!providerResponse.success)
-        throw new Error(providerResponse.message?.toString())
+      if (axiosResponse.statusText !== "OK")
+        throw new Error("Erro ao realizar o login.")
 
-      masterContext.login(providerResponse.data)
+      await masterContext.login(axiosResponse.data)
 
-      router.push("/")
+      await router.push("/")
     } catch (error: any) {
       setLock(false)
       setAlertMessage(error.message)
