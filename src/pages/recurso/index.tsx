@@ -166,6 +166,8 @@ const Recursos: NextPage<serversideReponse<recursoHomeType>> = props => {
         }
       )
 
+      console.log(providerResponse)
+
       if (!providerResponse.success)
         throw new Error("Erro ao buscar resultados.")
 

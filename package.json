@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "dev:test": "NODE_ENV=production next start"
   },
   "license": "ISC",
   "devDependencies": {
