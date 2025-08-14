@@ -83,7 +83,7 @@ const BoletimHome: NextPage<serversideReponse<boletimInicioType>> = props => {
           limite: limite
         },
         undefined,
-        { headers: { credential: ctx.usuario?.credencial } }
+        { headers: { credential: ctx.usuario?.credential } }
       )
 
       if (!response.success) throw new Error(response.message?.toString() || "")
@@ -294,7 +294,7 @@ const BoletimHome: NextPage<serversideReponse<boletimInicioType>> = props => {
                             limite: limite
                           },
                           undefined,
-                          { headers: { credential: ctx.usuario?.credencial } }
+                          { headers: { credential: ctx.usuario?.credential } }
                         )
 
                         if (!response.success)
@@ -331,7 +331,7 @@ const BoletimHome: NextPage<serversideReponse<boletimInicioType>> = props => {
                             limite: rowsPerPAge
                           },
                           undefined,
-                          { headers: { credential: ctx.usuario?.credencial } }
+                          { headers: { credential: ctx.usuario?.credential } }
                         )
 
                         if (!response.success)

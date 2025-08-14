@@ -841,7 +841,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         "boletim.updateconteudo",
         { conteudo: conteudoItems },
         { idboletim: id },
-        { headers: { credential: ctx.usuario?.credencial } }
+        { headers: { credential: ctx.usuario?.credential } }
       )
 
       if (!response.success)
@@ -889,7 +889,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         "boletim.updateobservacao",
         { observacao: observacaoText },
         { idboletim: id },
-        { headers: { credential: ctx.usuario?.credencial } }
+        { headers: { credential: ctx.usuario?.credential } }
       )
 
       if (!response.success)
@@ -937,7 +937,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
           "boletim.salvar",
           { boletim_tipo_id: boletimTipo, data: boltimData },
           undefined,
-          { headers: { credential: ctx.usuario?.credencial } }
+          { headers: { credential: ctx.usuario?.credential } }
         )
 
         if (!response.success)
@@ -990,7 +990,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         "boletim.publicarboletim",
         undefined,
         { idboletim: id },
-        { headers: { credential: ctx.usuario?.credencial } }
+        { headers: { credential: ctx.usuario?.credential } }
       )
 
       if (!response.success) throw new Error(response.message?.toString() || "")
@@ -1028,7 +1028,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         "boletim.aprovarboletim",
         undefined,
         { idboletim: id },
-        { headers: { credential: ctx.usuario?.credencial } }
+        { headers: { credential: ctx.usuario?.credential } }
       )
 
       if (!response.success) throw new Error(response.message?.toString() || "")
@@ -1063,7 +1063,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         "boletim.deleteboletim",
         undefined,
         { idboletim: id },
-        { headers: { credential: ctx.usuario?.credencial } }
+        { headers: { credential: ctx.usuario?.credential } }
       )
 
       if (!response.success) throw new Error(response.message?.toString() || "")
@@ -1378,7 +1378,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                   },
                                   {
                                     headers: {
-                                      credential: ctx.usuario?.credencial
+                                      credential: ctx.usuario?.credential
                                     }
                                   }
                                 )
