@@ -12,11 +12,12 @@ export default async function handler(
   }
 
   try {
-    let url =
-      process.env.NODE_ENV === "production"
-        ? "https://api.publicacoesinr.com.br"
-        : "http://localhost:3001"
+    // let url =
+    //   process.env.NODE_ENV === "production"
+    //     ? "https://api.publicacoesinr.com.br"
+    //     : "http://localhost:3001"
 
+    let url = "https://api.publicacoesinr.com.br"
     url = url + "/seguranca/autenticacao/painel"
 
     const apiResponse = await axios.post<{

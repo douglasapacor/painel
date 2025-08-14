@@ -903,6 +903,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
       setAprovado("N")
       setAprovadoem("")
       setAprovadopor("")
+
       setPublicado("N")
       setPublicadoem("")
       setPublicadopor("")
@@ -946,10 +947,13 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
         setAprovado("N")
         setAprovadoem("")
         setAprovadopor("")
+
         setPublicado("N")
         setPublicadoem("")
         setPublicadopor("")
+
         setNeedSaveBe(false)
+
         setId(response.data?.boletim_id ?? null)
         router.push(`/boletim/${response.data?.boletim_id}`)
         setActiveStep(1)
@@ -1002,6 +1006,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
       setLoading(false)
 
       setAlerMessage(response.message?.toString() || "")
+
       setShowAlert(true)
     } catch (error: any) {
       setAlerMessage(error.message)
@@ -1040,6 +1045,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
       setLoading(false)
 
       setAlerMessage(response.message?.toString() || "")
+
       setShowAlert(true)
     } catch (error: any) {
       setAlerMessage(error.message)
@@ -1144,6 +1150,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                 </IconButton>
               </Tooltip>
             </Grid>
+
             <Grid item xs={12} sm={12} md={10} lg={10} xl={10}>
               <Grid container spacing={1}>
                 <Grid item xs={12} sm={2} md={2} lg={2} xl={2}>
@@ -1732,12 +1739,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                 </InputLabel>
 
                                 <Select
-                                  disabled={
-                                    props.data.publicado &&
-                                    props.data.publicado === "S"
-                                      ? true
-                                      : false
-                                  }
+                                  disabled={publicado === "S" ? true : false}
                                   id="tipoConteudo"
                                   label="Tipo de Conteúdo"
                                   value={conteudotipo}
@@ -1770,12 +1772,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
                                   Contéudo
                                 </InputLabel>
                                 <Select
-                                  disabled={
-                                    props.data.publicado &&
-                                    props.data.publicado === "S"
-                                      ? true
-                                      : false
-                                  }
+                                  disabled={publicado === "S" ? true : false}
                                   id="ContentBoletimSelect"
                                   label="Contéudo"
                                   labelId="ContentBoletimLabel"
@@ -2328,6 +2325,7 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
           </Paper>
         </Grid>
       </Grid>
+
       <Modal
         open={showAcumuladoData}
         onClose={() => {
