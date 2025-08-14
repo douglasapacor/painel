@@ -89,8 +89,7 @@ const AutenticacaoPainel: NextPage = () => {
         { withCredentials: true }
       )
 
-      if (axiosResponse.statusText !== "OK")
-        throw new Error("Erro ao realizar o login.")
+      if (!axiosResponse.data) throw new Error("Erro ao realizar o login.")
 
       await masterContext.login(axiosResponse.data)
 
