@@ -29,7 +29,7 @@ export default async function handler(
 
     res.setHeader(
       "Set-Cookie",
-      `credencial=${apiResponse.data.data.credencial}; Path=/; Secure;`
+      `credential=${apiResponse.data.data.credential}; Path=/; Secure;`
     )
 
     res.status(200).json(apiResponse.data.data)

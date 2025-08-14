@@ -104,7 +104,7 @@ const Recursos: NextPage<serversideReponse<recursoHomeType>> = props => {
         undefined,
         { id: idToDelete },
         {
-          headers: { credential: ctx.usuario?.credencial }
+          headers: { credential: ctx.usuario?.credential }
         }
       )
 
@@ -125,7 +125,7 @@ const Recursos: NextPage<serversideReponse<recursoHomeType>> = props => {
         undefined,
         {
           headers: {
-            credential: ctx.usuario?.credencial
+            credential: ctx.usuario?.credential
           }
         }
       )

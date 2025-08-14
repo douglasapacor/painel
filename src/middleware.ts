@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
   try {
     const path = request.nextUrl.pathname
     const publicRoute = publicRoutes.find(route => route.path === path)
-    const authToken = request.cookies.get("credencial")
+    const authToken = request.cookies.get("credential")
 
     if (!authToken && publicRoute) return NextResponse.next()
 

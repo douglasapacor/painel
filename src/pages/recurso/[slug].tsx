@@ -119,7 +119,7 @@ const RecursoSelecionado: NextPage<
           url
         },
         undefined,
-        { headers: { credential: ctx.usuario?.credencial } }
+        { headers: { credential: ctx.usuario?.credential } }
       )
 
       if (!apiResponse.success) throw new Error(apiResponse.message?.toString())
@@ -164,7 +164,7 @@ const RecursoSelecionado: NextPage<
         undefined,
         { id: id },
         {
-          headers: { credential: ctx.usuario?.credencial }
+          headers: { credential: ctx.usuario?.credential }
         }
       )
 
