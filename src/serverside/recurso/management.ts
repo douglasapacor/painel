@@ -33,7 +33,7 @@ const management = async (
         { limite: 10, pagina: 0 },
         {
           headers: {
-            credential: context.req.cookies["inrcredential"]
+            credential: context.req.cookies["credential"]
           }
         }
       )
@@ -47,7 +47,7 @@ const management = async (
       response.metadata = {
         nome: "Novo recurso",
         icone: "add",
-        url: "recurso/new",
+        url: "recurso/novo",
         detalhes: { criacao: null, edicao: null }
       }
     } else {
@@ -65,7 +65,7 @@ const management = async (
         { id: context.params?.slug },
         {
           headers: {
-            credential: context.req.cookies["inrcredential"]
+            credential: context.req.cookies["credential"]
           }
         }
       )
@@ -78,7 +78,7 @@ const management = async (
           { limite: 10, pagina: 0 },
           {
             headers: {
-              credential: context.req.cookies["inrcredential"]
+              credential: context.req.cookies["credential"]
             }
           }
         )

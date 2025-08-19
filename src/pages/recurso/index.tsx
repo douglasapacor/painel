@@ -166,8 +166,6 @@ const Recursos: NextPage<serversideReponse<recursoHomeType>> = props => {
         }
       )
 
-      console.log(providerResponse)
-
       if (!providerResponse.success)
         throw new Error("Erro ao buscar resultados.")
 
@@ -216,7 +214,7 @@ const Recursos: NextPage<serversideReponse<recursoHomeType>> = props => {
             color="primary"
             aria-label="add"
             onClick={() => {
-              router.push("/recurso/new")
+              router.push("/recurso/novo")
             }}
           >
             <Add />
