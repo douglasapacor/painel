@@ -33,7 +33,7 @@ const home = async (
       { limite: 30, pagina: 0 },
       {
         headers: {
-          credential: context.req.cookies["inrcredential"]
+          credential: context.req.cookies["credential"]
         }
       }
     )
@@ -51,7 +51,7 @@ const home = async (
       undefined,
       {
         headers: {
-          credential: context.req.cookies["inrcredential"]
+          credential: context.req.cookies["credential"]
         }
       }
     )

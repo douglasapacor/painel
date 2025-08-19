@@ -530,6 +530,7 @@ const RecursoSelecionado: NextPage<
           </Box>
         </Grid>
       </Grid>
+
       <Modal open={showDeleteFrame}>
         <Box
           sx={{
