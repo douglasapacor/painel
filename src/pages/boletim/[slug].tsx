@@ -932,6 +932,8 @@ const Novo: NextPage<serversideReponse<boletimManagementType>> = props => {
 
         if (!boltimData) throw new Error("Entre com a data do boletim")
 
+        setLoading(true)
+
         const provider = new Provider()
         const response = await provider.call<{ boletim_id: number }>(
           "api",
