@@ -12,12 +12,12 @@ export default async function handler(
   }
 
   try {
-    // let url =
-    //   process.env.NODE_ENV === "production"
-    //     ? "https://api.publicacoesinr.com.br"
-    //     : "http://localhost:3001"
+    let url =
+      process.env.NODE_ENV === "production"
+        ? "https://api.publicacoesinr.com.br"
+        : "http://localhost:3001"
 
-    let url = "https://api.publicacoesinr.com.br"
+    // let url = "https://api.publicacoesinr.com.br"
     url = url + "/seguranca/autenticacao/painel"
 
     const apiResponse = await axios.post<{
@@ -28,13 +28,24 @@ export default async function handler(
       withCredentials: true
     })
 
+    const today = new Date()
+    let newDate: Date
+
+    if (req.body.keep) {
+      newDate = new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000)
+    } else {
+      newDate = new Date(today.getTime() + 8 * 60 * 60 * 1000)
+    }
+
     res.setHeader(
       "Set-Cookie",
-      `credential=${apiResponse.data.data.credential}; Path=/; Secure;`
+      `credential=${
+        apiResponse.data.data.credential
+      }; Path=/; Secure; Expires=${newDate.toUTCString()};`
     )
 
     res.status(200).json(apiResponse.data.data)
-  } catch (err) {
-    res.status(500).json({ success: false, message: String(err) })
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message })
   }
 }
